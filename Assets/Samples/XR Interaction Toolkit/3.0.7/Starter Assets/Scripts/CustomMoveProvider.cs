@@ -259,5 +259,15 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
             var input = ReadInput();
             xrOrigin.transform.position = ComputeDesiredMove(input);
         }
+
+        /// <inheritdoc />
+        protected Vector2 ReadInput()
+        {
+            var leftHandValue = leftHandMoveInput.ReadValue();
+            var rightHandValue = rightHandMoveInput.ReadValue();
+
+            return leftHandValue + rightHandValue;
+        }
+
     }
 }
