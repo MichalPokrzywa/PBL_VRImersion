@@ -1,20 +1,18 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerCollision : MonoBehaviour
 {
-    [SerializeField] int rocksTouchedCount = 0;
-    [SerializeField] int requiredTouches = 3;
     [SerializeField] Vector3 startPosition;
     [SerializeField] GameObject parentXR;
 
-    HashSet<int> touchedRocks = new HashSet<int>();
-    bool gameEnded = false;
+    public UnityAction<int> onCollisionWithCheckpoint;
+    public UnityAction onCollisionWithWater;
 
     Rigidbody rb;
 
     const string WATER_TAG = "Water";
-    const string ROCK_TAG = "Rock";
+    const string CHECKPOINT_TAG = "Rock";
 
     void Start()
     {
@@ -34,27 +32,15 @@ public class PlayerCollision : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.CompareTag(ROCK_TAG) && !gameEnded)
+        if (collision.collider.CompareTag(CHECKPOINT_TAG))
         {
             int rockID = collision.collider.gameObject.GetInstanceID();
-
-            if (!touchedRocks.Contains(rockID))
-            {
-                touchedRocks.Add(rockID);
-                rocksTouchedCount++;
-                Debug.Log($"Dotkniêto nowego kamienia! Dotkniêcia: {rocksTouchedCount}/{requiredTouches}");
-
-                // Win condition
-                if (rocksTouchedCount >= requiredTouches)
-                {
-                    gameEnded = true;
-                }
-            }
+            onCollisionWithCheckpoint?.Invoke(rockID);
         }
 
-        // Lose condition
-        else if (collision.collider.CompareTag(WATER_TAG) && !gameEnded)
+        else if (collision.collider.CompareTag(WATER_TAG))
         {
+            onCollisionWithWater?.Invoke();
             Restart();
         }
     }
@@ -62,8 +48,5 @@ public class PlayerCollision : MonoBehaviour
     void Restart()
     {
         parentXR.transform.position = startPosition;
-        rocksTouchedCount = 0;
-        touchedRocks.Clear();
-        gameEnded = false;
     }
 }

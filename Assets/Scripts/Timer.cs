@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class Timer : MonoBehaviour
 {
@@ -10,10 +8,13 @@ public class Timer : MonoBehaviour
     public bool timeIsRunning = true;
     public TMP_Text timeText;
 
+    public Action OnTimerEnd;
+
     private void Start()
     {
         timeIsRunning = true;
     }
+
     private void Update()
     {
         if (timeIsRunning)
@@ -22,11 +23,12 @@ public class Timer : MonoBehaviour
             {
                 targetTime -= Time.deltaTime;
                 DisplayTime(targetTime);
-            } else
+            }
+            else
             {
                 targetTime = 0;
                 timeIsRunning = false;
-                LoadScene();
+                OnTimerEnd?.Invoke();
             }
         }
     }
@@ -39,9 +41,4 @@ public class Timer : MonoBehaviour
         timeText.text = string.Format("{0:00} : {1:00}", minutes, seconds);
     }
 
-    void LoadScene()
-    {
-        Debug.Log("Koniec czasu");
-        ChangeScene.Instance.MenuSecondScene();
-    }
 }
