@@ -8,8 +8,8 @@ public class VRClickablePanel : MonoBehaviour
     [SerializeField] TextMeshPro text;
     [SerializeField] Button button;
 
-    UnityAction action;
     bool removeActionOnClose = true;
+    UnityAction registeredAction;
 
     void Start()
     {
@@ -19,6 +19,12 @@ public class VRClickablePanel : MonoBehaviour
     public void ShowPanel(string text, UnityAction action=null)
     {
         SetText(text);
+        // Remove previous action if it was set to be removed
+        if (registeredAction != null && removeActionOnClose)
+        {
+            button.onClick.RemoveListener(registeredAction);
+        }
+        // Set new action if provided
         if (action != null)
         {
             SetButtonAction(action);
@@ -33,16 +39,12 @@ public class VRClickablePanel : MonoBehaviour
 
     public void SetButtonAction(UnityAction newAction)
     {
-        action = newAction;
-        button.onClick.AddListener(action);
+        registeredAction = newAction;
+        button.onClick.AddListener(registeredAction);
     }
 
     void DefaultButtonAction()
     {
-        if (action != null && removeActionOnClose)
-        {
-            button.onClick.RemoveListener(action);
-        }
         gameObject.SetActive(false);
     }
 }

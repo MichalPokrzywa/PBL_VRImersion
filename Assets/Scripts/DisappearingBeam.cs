@@ -15,7 +15,7 @@ public class DisappearingBeam : MonoBehaviour
         beamRenderer = GetComponent<Renderer>();
     }
 
-    private void OnCollisionEnter(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag(PLAYER_TAG) && !isPlayerOnBeam)
         {
@@ -24,17 +24,23 @@ public class DisappearingBeam : MonoBehaviour
         }
     }
 
-    private void DisableBeam()
-    {
-        beamCollider.enabled = false;
-        beamRenderer.enabled = false;
-    }
-
-    private void OnCollisionExit(Collision collision)
+    void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag(PLAYER_TAG))
         {
             isPlayerOnBeam = false;
         }
+    }
+
+    public void EnableBeam()
+    {
+        beamCollider.enabled = true;
+        beamRenderer.enabled = true;
+    }
+
+    void DisableBeam()
+    {
+        beamCollider.enabled = false;
+        beamRenderer.enabled = false;
     }
 }

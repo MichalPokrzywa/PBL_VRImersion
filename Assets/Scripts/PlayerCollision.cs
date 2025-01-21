@@ -8,6 +8,7 @@ public class PlayerCollision : MonoBehaviour
 
     public UnityAction<int> onCollisionWithCheckpoint;
     public UnityAction onCollisionWithWater;
+    public bool VRMode = true;
 
     Rigidbody rb;
 
@@ -22,7 +23,7 @@ public class PlayerCollision : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (rb != null)
+        if (rb != null && VRMode)
         {
             Vector3 newPosition = parentXR.transform.position;
             Quaternion newRotation = parentXR.transform.rotation;
@@ -47,6 +48,9 @@ public class PlayerCollision : MonoBehaviour
 
     void Restart()
     {
-        parentXR.transform.position = startPosition;
+        if (VRMode)
+            parentXR.transform.position = startPosition;
+        else
+            transform.position = startPosition;
     }
 }

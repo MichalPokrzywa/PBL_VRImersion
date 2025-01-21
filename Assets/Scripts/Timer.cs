@@ -4,33 +4,51 @@ using System;
 
 public class Timer : MonoBehaviour
 {
-    public float targetTime = 30;
-    public bool timeIsRunning = true;
-    public TMP_Text timeText;
+    [SerializeField] float targetTime = 30;
+    [SerializeField] bool timeIsRunning = true;
+    [SerializeField] TMP_Text timeText;
+
+    float timer;
 
     public Action OnTimerEnd;
 
-    private void Start()
+    void Start()
     {
-        timeIsRunning = true;
+        ResetTimer();
     }
 
-    private void Update()
+    void Update()
     {
         if (timeIsRunning)
         {
-            if(targetTime > 0)
+            if (timer > 0)
             {
-                targetTime -= Time.deltaTime;
-                DisplayTime(targetTime);
+                timer -= Time.deltaTime;
+                DisplayTime(timer);
             }
             else
             {
-                targetTime = 0;
+                timer = 0;
                 timeIsRunning = false;
                 OnTimerEnd?.Invoke();
             }
         }
+    }
+
+    public void ResetTimer()
+    {
+        timeIsRunning = true;
+        timer = targetTime;
+    }
+
+    public void StopTimer()
+    {
+        timeIsRunning = false;
+    }
+
+    public void ResumeTimer()
+    {
+        timeIsRunning = true;
     }
 
     void DisplayTime(float timeToDisplay)

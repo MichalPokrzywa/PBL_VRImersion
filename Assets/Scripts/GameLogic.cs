@@ -1,36 +1,64 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.Windows;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 
 public class GameLogic : MonoBehaviour
 {
     [SerializeField] int checkpointsTouched = 0;
     [SerializeField] int requiredTouches = 3;
-    [SerializeField] PlayerCollision player;
     [SerializeField] VRClickablePanel infoPanel;
     [SerializeField] Timer timer;
+    [SerializeField] GameObject environment;
+
+    [Header("Game Mode")]
+    [SerializeField] bool VRMode;
+
+    [Header("Keyboard Movement")]
+    [SerializeField] PlayerCollision playerKeyboard;
+    [SerializeField] GameObject keyboardMovementController;
+    [SerializeField] StandaloneInputModule input;
+
+    [Header("VR Movement")]
+    [SerializeField] PlayerCollision playerVR;
+    [SerializeField] XRUIInputModule xrInput;
+    [SerializeField] List<GameObject> VRComponents;
 
     const string startMssg = "Dotrzyj do wszystkich checkpointów w ustalonym czasie. Powodzenia!";
     const string winMssg = "Gratulacje! Wygra³eœ!";
     const string loseMssg = "Przegra³eœ! Spróbuj jeszcze raz.";
 
     HashSet<int> touchedCheckpoints = new HashSet<int>();
-    bool gameEnded = false;
+    DisappearingBeam[] beams;
+    PlayerCollision player;
+    bool gameWinState = false;
 
-    void Start()
+    void Awake()
     {
+        beams = environment.GetComponentsInChildren<DisappearingBeam>();
+
+        // Use playerCollider component based on VR or standalone mode
+        player = VRMode ? playerVR : playerKeyboard;
+        player.VRMode = VRMode;
+
         player.onCollisionWithCheckpoint += OnCheckpointTouched;
         player.onCollisionWithWater += OnGameLost;
         timer.OnTimerEnd += OnGameLost;
 
-        infoPanel.ShowPanel(startMssg);
+        UpdateComponentsState();
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
-        player.onCollisionWithCheckpoint -= OnCheckpointTouched;
-        player.onCollisionWithWater -= OnGameLost;
-        timer.OnTimerEnd -= OnGameLost;
+        if (player != null)
+        {
+            player.onCollisionWithCheckpoint -= OnCheckpointTouched;
+            player.onCollisionWithWater -= OnGameLost;
+        }
+        if (timer != null)
+            timer.OnTimerEnd -= OnGameLost;
     }
 
     void OnCheckpointTouched(int checkpointId)
@@ -41,30 +69,65 @@ public class GameLogic : MonoBehaviour
             checkpointsTouched++;
             Debug.Log($"Touches: {checkpointsTouched}/{requiredTouches}");
 
-            // Win condition
             if (checkpointsTouched >= requiredTouches)
             {
-                gameEnded = true;
-                UpdatePanel();
+                OnGameWin();
             }
         }
     }
 
+    void OnGameWin()
+    {
+        gameWinState = true;
+        timer.StopTimer();
+        UpdatePanel();
+    }
+
     void OnGameLost()
     {
-        gameEnded = false;
+        gameWinState = false;
+        timer.ResetTimer();
         UpdatePanel();
+        ResetBeams();
+    }
+
+    public void ResetBeams()
+    {
+        foreach (DisappearingBeam beam in beams)
+        {
+            beam.EnableBeam();
+        }
     }
 
     void UpdatePanel()
     {
-        if (gameEnded)
+        if (!VRMode)
         {
-            infoPanel.ShowPanel(winMssg);
+            return;
+        }
+
+        if (gameWinState)
+        {
+            infoPanel.ShowPanel(winMssg, ResetBeams);
         }
         else
         {
             infoPanel.ShowPanel(loseMssg);
         }
+    }
+
+    void UpdateComponentsState()
+    {
+        if (VRMode)
+            infoPanel.ShowPanel(startMssg);
+
+        foreach (GameObject component in VRComponents)
+        {
+            component.SetActive(VRMode);
+        }
+        keyboardMovementController.SetActive(!VRMode);
+
+        xrInput.enabled = VRMode;
+        input.enabled = !VRMode;
     }
 }
