@@ -3,46 +3,67 @@ using UnityEngine;
 
 public class PlayerCollision : MonoBehaviour
 {
-    private bool gameEnded = false;
-    [SerializeField] private HashSet<int> touchedRocks = new HashSet<int>(); // Zestaw przechowuj¹cy ID dotkniêtych kamieni
-    [SerializeField] private int rocksTouchedCount = 0; // Licznik dotkniêtych unikalnych kamieni
-    public int requiredTouches = 3; // Liczba wymaganych dotkniêæ ró¿nych kamieni
+    [SerializeField] int rocksTouchedCount = 0;
+    [SerializeField] int requiredTouches = 3;
+    [SerializeField] Vector3 startPosition;
+    [SerializeField] GameObject parentXR;
 
-    private void OnCollisionEnter(Collision collision)
+    HashSet<int> touchedRocks = new HashSet<int>();
+    bool gameEnded = false;
+
+    Rigidbody rb;
+
+    const string WATER_TAG = "Water";
+    const string ROCK_TAG = "Rock";
+
+    void Start()
     {
-        if (collision.collider.CompareTag("Rock") && !gameEnded)
-        {
-            // Pobierz unikalny identyfikator kamienia 
-            int rockID = collision.collider.gameObject.GetInstanceID();
+        rb = GetComponent<Rigidbody>();
+        Restart();
+    }
 
-            // SprawdŸ, czy kamieñ zosta³ ju¿ dotkniêty
-            if (!touchedRocks.Contains(rockID))
-            {
-                touchedRocks.Add(rockID); // Dodaj ID kamienia do zestawu
-                rocksTouchedCount++; // Zwiêksz licznik dotkniêæ
-                Debug.Log($"Dotkniêto nowego kamienia! Dotkniêcia: {rocksTouchedCount}/{requiredTouches}");
-
-                // SprawdŸ, czy gracz dotkn¹³ wystarczaj¹cej liczby kamieni
-                if (rocksTouchedCount >= requiredTouches)
-                {
-                    Debug.Log("Gracz dotkn¹³ wystarczaj¹cej liczby kamieni. Koniec gry.");
-                    Invoke("EndGame", 0.5f);
-                    gameEnded = true;
-                }
-            }
-            else
-            {
-                Debug.Log("Ten kamieñ zosta³ ju¿ dotkniêty!");
-            }
-        }
-        if (collision.collider.CompareTag("Water") && !gameEnded)
+    void FixedUpdate()
+    {
+        if (rb != null)
         {
-            ChangeScene.Instance.MenuSecondScene();
+            Vector3 newPosition = parentXR.transform.position;
+            Quaternion newRotation = parentXR.transform.rotation;
+            rb.Move(newPosition, newRotation);
         }
     }
 
-    void EndGame()
+    void OnCollisionEnter(Collision collision)
     {
-        ChangeScene.Instance.MenuScene(); // Twoja metoda zmiany sceny
+        if (collision.collider.CompareTag(ROCK_TAG) && !gameEnded)
+        {
+            int rockID = collision.collider.gameObject.GetInstanceID();
+
+            if (!touchedRocks.Contains(rockID))
+            {
+                touchedRocks.Add(rockID);
+                rocksTouchedCount++;
+                Debug.Log($"Dotkniêto nowego kamienia! Dotkniêcia: {rocksTouchedCount}/{requiredTouches}");
+
+                // Win condition
+                if (rocksTouchedCount >= requiredTouches)
+                {
+                    gameEnded = true;
+                }
+            }
+        }
+
+        // Lose condition
+        else if (collision.collider.CompareTag(WATER_TAG) && !gameEnded)
+        {
+            Restart();
+        }
+    }
+
+    void Restart()
+    {
+        parentXR.transform.position = startPosition;
+        rocksTouchedCount = 0;
+        touchedRocks.Clear();
+        gameEnded = false;
     }
 }

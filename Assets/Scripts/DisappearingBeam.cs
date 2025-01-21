@@ -1,25 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DisappearingBeam : MonoBehaviour
 {
-    public float disappearDelay = 2f; // Czas po jakim belka znika
-    private bool isPlayerOnBeam = false; // Flaga sprawdzaj¹ca czy gracz jest na belce
+    public float disappearDelay = 2f;
+    private bool isPlayerOnBeam = false;
     private Collider beamCollider;
     private Renderer beamRenderer;
 
+    const string PLAYER_TAG = "Player";
+
     void Start()
     {
-        // Pobierz komponenty belki
         beamCollider = GetComponent<Collider>();
         beamRenderer = GetComponent<Renderer>();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        // SprawdŸ, czy obiekt koliduj¹cy to gracz (zak³adamy tag "Player")
-        if (collision.gameObject.CompareTag("Player") && !isPlayerOnBeam)
+        if (collision.gameObject.CompareTag(PLAYER_TAG) && !isPlayerOnBeam)
         {
             isPlayerOnBeam = true;
             Invoke(nameof(DisableBeam), disappearDelay);
@@ -28,15 +26,13 @@ public class DisappearingBeam : MonoBehaviour
 
     private void DisableBeam()
     {
-        // Wy³¹cz mo¿liwoœæ chodzenia po belce
         beamCollider.enabled = false;
-        beamRenderer.enabled = false; // Opcjonalnie - ukryj belkê
+        beamRenderer.enabled = false;
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        // Jeœli gracz opuszcza belkê, resetuj flagê (jeœli potrzebne)
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag(PLAYER_TAG))
         {
             isPlayerOnBeam = false;
         }
