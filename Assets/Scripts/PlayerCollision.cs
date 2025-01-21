@@ -46,7 +46,7 @@ public class PlayerCollision : MonoBehaviour
         }
     }
 
-    void Restart()
+    public void Restart()
     {
         if (VRMode)
             parentXR.transform.position = startPosition;

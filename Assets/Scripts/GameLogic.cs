@@ -86,9 +86,8 @@ public class GameLogic : MonoBehaviour
     void OnGameLost()
     {
         gameWinState = false;
-        timer.ResetTimer();
         UpdatePanel();
-        ResetBeams();
+        RestartGame();
     }
 
     public void ResetBeams()
@@ -97,6 +96,14 @@ public class GameLogic : MonoBehaviour
         {
             beam.EnableBeam();
         }
+    }
+
+    void RestartGame()
+    {
+        ResetBeams();
+        player.Restart();
+        touchedCheckpoints.Clear();
+        timer.ResetTimer();
     }
 
     void UpdatePanel()
@@ -108,7 +115,7 @@ public class GameLogic : MonoBehaviour
 
         if (gameWinState)
         {
-            infoPanel.ShowPanel(winMssg, ResetBeams);
+            infoPanel.ShowPanel(winMssg, RestartGame);
         }
         else
         {
