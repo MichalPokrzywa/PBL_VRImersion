@@ -37,6 +37,11 @@ public class PlayerCollision : MonoBehaviour
         {
             int rockID = collision.collider.gameObject.GetInstanceID();
             onCollisionWithCheckpoint?.Invoke(rockID);
+            Checkpoint checkpointScript = collision.collider.GetComponent<Checkpoint>();
+            if (checkpointScript != null)
+            {
+                checkpointScript.DeactivateObject();
+            }
         }
 
         else if (collision.collider.CompareTag(WATER_TAG))
