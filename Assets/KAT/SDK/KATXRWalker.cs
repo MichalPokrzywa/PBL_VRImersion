@@ -49,6 +49,7 @@ public class KATXRWalker : MonoBehaviour
     void Awake()
     {
         Application.targetFrameRate = 60;
+        lastPosition = transform.position;
     }
 
     void Start()
