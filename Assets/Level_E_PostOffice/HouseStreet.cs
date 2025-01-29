@@ -26,6 +26,7 @@ public class HouseStreet : MonoBehaviour
         onPackageDelivered.Invoke();
         Debug.Log("PackageDelivered");
         Destroy(arg0.interactableObject.transform.gameObject);
+        Mailbox.SetActive(false);
     }
 
     public HouseStreet(int houseNumber, Color streetColor)

@@ -63,18 +63,18 @@
   <ItemGroup>
     <Compile Include="Assets\KAT\Demo\2. Raw Data\RawdataDemo.cs" />
     <Compile Include="Assets\KAT\SDK\KATXREnvHelper.cs" />
-    <Compile Include="Assets\Resources\Level_A\HouseManager.cs" />
+    <Compile Include="Assets\Level_E_PostOffice\HouseStreet.cs" />
     <Compile Include="Assets\KAT\SDK\KATNativeSDK.cs" />
     <Compile Include="Assets\KAT\Demo\C2ExtraDataDemo.cs" />
     <Compile Include="Assets\KAT\SDK\Legacy\3DTDemos\ShakeLevelTrigger.cs" />
     <Compile Include="Assets\KAT\SDK\MiniSExtraData.cs" />
     <Compile Include="Assets\KAT\SDK\Legacy\3DTDemos\DemoTerrainManager.cs" />
     <Compile Include="Assets\KAT\SDK\Legacy\KATLegacySDK.cs" />
-    <Compile Include="Assets\Resources\Level_A\HouseStreet.cs" />
     <Compile Include="Assets\UpDown.cs" />
     <Compile Include="Assets\KAT\SDK\Legacy\3DTDemos\QuiverTrigger.cs" />
     <Compile Include="Assets\KAT\SDK\Legacy\_3DTerrainPlatform.cs" />
     <Compile Include="Assets\KAT\SDK\Legacy\3DTDemos\LiftTrigger.cs" />
+    <Compile Include="Assets\Level_E_PostOffice\HouseManager.cs" />
     <Compile Include="Assets\KAT\SDK\TreadmillExtensionsTest.cs" />
     <Compile Include="Assets\Paczka.cs" />
     <Compile Include="Assets\KAT\SDK\Legacy\3DTDemos\OverweightTrigger.cs" />
@@ -84,8 +84,8 @@
     <Compile Include="Assets\PlayerMovement.cs" />
     <Compile Include="Assets\KAT\SDK\WalkC2ExtraData.cs" />
     <Compile Include="Assets\KAT\SDK\Legacy\3DTDemos\WeightLessnessTrigger.cs" />
+    <Compile Include="Assets\Level_E_PostOffice\Package.cs" />
     <Compile Include="Assets\KAT\SDK\LocoSExtraData.cs" />
-    <Compile Include="Assets\Resources\Level_A\Package.cs" />
     <Compile Include="Assets\KAT\SDK\MainThreadDispatcher.cs" />
     <Compile Include="Assets\KAT\SDK\Legacy\3DTDemos\TremorShortTrigger.cs" />
     <Compile Include="Assets\KAT\Demo\LongPressCalibrate.cs" />
