@@ -71,3 +71,10 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+/Assembly-CSharp-Editor.csproj
+/Assembly-CSharp.csproj
+/Unity.XR.Hands.Samples.VisualizerSample.csproj
+/Unity.XR.Interaction.Toolkit.Samples.Hands.csproj
+/Unity.XR.Interaction.Toolkit.Samples.Hands.Editor.csproj
+/Unity.XR.Interaction.Toolkit.Samples.StarterAssets.csproj
+/Unity.XR.Interaction.Toolkit.Samples.StarterAssets.Editor.csproj
