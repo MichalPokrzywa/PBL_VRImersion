@@ -9,6 +9,8 @@ public class HouseManager : MonoBehaviour
 {
     // Lista przechowuj¹ca obiekty HouseStreet
     public List<HouseStreet> HouseList = new List<HouseStreet>();
+    public GameObject PackagePrefab;
+    public Transform PackegeSpawnPoint;
 
     // Metoda dodaj¹ca nowy dom do listy
     public void AddHouse(HouseStreet house)
@@ -42,16 +44,31 @@ public class HouseManager : MonoBehaviour
         return HouseList[randomIndex];
     }
 
+
     // Przyk³ad u¿ycia w Start
     void Start()
     {
+        HouseStreet.onPackageDelivered += PackageSpawn;
         HouseList = FindObjectsByType<HouseStreet>(FindObjectsSortMode.InstanceID).ToList();
+
+        foreach (HouseStreet house in HouseList)
+        {
+            house.SetMailbox(false);
+        }
         // Losowanie i wyœwietlanie informacji o losowym domu
+        PackageSpawn();
+    }
+
+    private void PackageSpawn()
+    {
         HouseStreet randomHouse = RandomizeHouse();
         if (randomHouse != null)
         {
             Debug.Log("Randomized House:");
             randomHouse.DisplayInfo();
+            randomHouse.SetMailbox(true);
+            GameObject pack = Instantiate(PackagePrefab, PackegeSpawnPoint.position,Quaternion.identity);
+            pack.GetComponent<Package>().SetPackage(randomHouse.HouseNumber, randomHouse.StreetColor);
         }
     }
 }
