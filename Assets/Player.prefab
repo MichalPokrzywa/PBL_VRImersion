@@ -450,11 +450,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: KATDemoWalker
       objectReference: {fileID: 0}
-    - target: {fileID: 2225148161644640726, guid: 4bc2d74b2ef40e3439487fcbf266cba2,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2225148161644640727, guid: 4bc2d74b2ef40e3439487fcbf266cba2,
         type: 3}
       propertyPath: xr
@@ -465,16 +460,6 @@ PrefabInstance:
       propertyPath: eye
       value: 
       objectReference: {fileID: 8352650423664220035}
-    - target: {fileID: 2225148161644640727, guid: 4bc2d74b2ef40e3439487fcbf266cba2,
-        type: 3}
-      propertyPath: executeMethod
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2225148161644640729, guid: 4bc2d74b2ef40e3439487fcbf266cba2,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2225148161644640731, guid: 4bc2d74b2ef40e3439487fcbf266cba2,
         type: 3}
       propertyPath: m_LocalPosition.x
