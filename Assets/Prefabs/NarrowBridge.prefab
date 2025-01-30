@@ -166,6 +166,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129146070732978
 GameObject:
@@ -333,6 +335,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129146174170127
 GameObject:
@@ -500,6 +504,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129146383803637
 GameObject:
@@ -667,6 +673,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129146460461226
 GameObject:
@@ -834,6 +842,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129146652923143
 GameObject:
@@ -1001,6 +1011,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129146704673399
 GameObject:
@@ -1168,6 +1180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129146737089002
 GameObject:
@@ -1442,6 +1456,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129146989868252
 GameObject:
@@ -1609,6 +1625,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129147051897866
 GameObject:
@@ -1776,6 +1794,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129147116615810
 GameObject:
@@ -1943,6 +1963,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129147210657874
 GameObject:
@@ -2110,6 +2132,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129147298865641
 GameObject:
@@ -2367,6 +2391,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129147493888210
 GameObject:
@@ -2377,6 +2403,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9115129147493888221}
+  - component: {fileID: 4063397613742470890}
   m_Layer: 0
   m_Name: NarrowBridge
   m_TagString: Untagged
@@ -2417,6 +2444,37 @@ Transform:
   - {fileID: 9115129146737089013}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0.066, y: 38.213, z: -1.572}
+--- !u!114 &4063397613742470890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9115129147493888210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baf42b9539a04014ebb9d4ab7f60cf00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  beams:
+  - {fileID: 4193052561811322845}
+  - {fileID: 5121428900833036126}
+  - {fileID: 6315459951358849195}
+  - {fileID: 2446175354875167889}
+  - {fileID: 2510243961525249804}
+  - {fileID: 9219747479864368863}
+  - {fileID: 267792430823920881}
+  - {fileID: 8008423143060926966}
+  - {fileID: 3834914712512494358}
+  - {fileID: 3313288544530712680}
+  - {fileID: 1766699325216602848}
+  - {fileID: 8946886250617664193}
+  - {fileID: 5891162599625723849}
+  - {fileID: 4726366095079599205}
+  - {fileID: 5971351437588984235}
+  - {fileID: 5226597908300963371}
+  leftController: {fileID: 0}
+  rightController: {fileID: 0}
 --- !u!1 &9115129147768634807
 GameObject:
   m_ObjectHideFlags: 0
@@ -2583,6 +2641,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129147818157221
 GameObject:
@@ -2750,6 +2810,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
 --- !u!1 &9115129147918701426
 GameObject:
@@ -2917,4 +2979,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96b569cccf73484a953004cc05ffa50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rb: {fileID: 9115129146018036554}
+  bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2

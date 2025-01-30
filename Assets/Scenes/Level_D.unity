@@ -828,6 +828,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1136494076}
     m_Modifications:
+    - target: {fileID: 4063397613742470890, guid: 76a7d3598fc1a284c9057aed96cff7a3,
+        type: 3}
+      propertyPath: 'beams.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 9115129146018036552, guid: 76a7d3598fc1a284c9057aed96cff7a3,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -4199,6 +4204,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1597613773}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &416976318 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 202364687, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1364002831}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &422598670
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4659,6 +4670,11 @@ PrefabInstance:
       propertyPath: xr
       value: 
       objectReference: {fileID: 1532520605}
+    - target: {fileID: 2225148161644640727, guid: 4bc2d74b2ef40e3439487fcbf266cba2,
+        type: 3}
+      propertyPath: eye
+      value: 
+      objectReference: {fileID: 2014451152}
     - target: {fileID: 2225148161644640729, guid: 4bc2d74b2ef40e3439487fcbf266cba2,
         type: 3}
       propertyPath: m_Enabled
@@ -22361,7 +22377,9 @@ MonoBehaviour:
   requiredTouches: 1
   infoPanel: {fileID: 9115987485745870099}
   timer: {fileID: 3827976942462639672}
-  environment: {fileID: 1287084670}
+  bridgesParent: {fileID: 1136494075}
+  leftController: {fileID: 416976318}
+  rightController: {fileID: 1905511996}
   VRMode: 0
   playerKeyboard: {fileID: 1781065242}
   keyboardMovementController: {fileID: 1781065241}
@@ -22655,6 +22673,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76a7d3598fc1a284c9057aed96cff7a3, type: 3}
+--- !u!1 &1905511996 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1670256624, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1364002831}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1906188967
 GameObject:
   m_ObjectHideFlags: 0
@@ -25644,6 +25668,12 @@ Transform:
   m_Children: []
   m_Father: {fileID: 626213927}
   m_LocalEulerAnglesHint: {x: 0, y: -89.541, z: 0}
+--- !u!1 &2014451152 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1767192433, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1364002831}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2019021215 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5353588270218422151, guid: 83145382902cecc4286a4f62b720fb37,

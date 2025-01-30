@@ -9,6 +9,7 @@ public class Timer : MonoBehaviour
     [SerializeField] TMP_Text timeText;
 
     float timer;
+    public float TimerValue => timer;
 
     public Action OnTimerEnd;
 

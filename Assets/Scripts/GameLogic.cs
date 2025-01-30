@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Windows;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
 public class GameLogic : MonoBehaviour
@@ -11,7 +9,12 @@ public class GameLogic : MonoBehaviour
     [SerializeField] int requiredTouches = 3;
     [SerializeField] VRClickablePanel infoPanel;
     [SerializeField] Timer timer;
-    [SerializeField] GameObject environment;
+    [SerializeField] GameObject bridgesParent;
+    [SerializeField] GameObject leftController;
+    [SerializeField] GameObject rightController;
+
+    public static GameObject LeftController { get; private set; }
+    public static GameObject RightController { get; private set; }
 
     [Header("Game Mode")]
     [SerializeField] bool VRMode;
@@ -31,13 +34,16 @@ public class GameLogic : MonoBehaviour
     const string loseMssg = "Przegra³eœ! Spróbuj jeszcze raz.";
 
     HashSet<int> touchedCheckpoints = new HashSet<int>();
-    DisappearingBeam[] beams;
     PlayerCollision player;
+    BridgeBehaviour[] bridges;
     bool gameWinState = false;
 
     void Awake()
     {
-        beams = environment.GetComponentsInChildren<DisappearingBeam>();
+        bridges = bridgesParent.GetComponentsInChildren<BridgeBehaviour>();
+
+        LeftController = leftController;
+        RightController = rightController;
 
         // Use playerCollider component based on VR or standalone mode
         player = VRMode ? playerVR : playerKeyboard;
@@ -90,17 +96,17 @@ public class GameLogic : MonoBehaviour
         RestartGame();
     }
 
-    public void ResetBeams()
+    public void ResetAllBridges()
     {
-        foreach (DisappearingBeam beam in beams)
+        foreach (BridgeBehaviour bridge in bridges)
         {
-            beam.EnableBeam();
+            bridge.ResetBridgeState();
         }
     }
 
     void RestartGame()
     {
-        ResetBeams();
+        ResetAllBridges();
         player.Restart();
         touchedCheckpoints.Clear();
         timer.ResetTimer();
@@ -115,6 +121,7 @@ public class GameLogic : MonoBehaviour
 
         if (gameWinState)
         {
+            string mssg = winMssg + $"\nCzas: {timer.TimerValue:0.00}s";
             infoPanel.ShowPanel(winMssg, RestartGame);
         }
         else

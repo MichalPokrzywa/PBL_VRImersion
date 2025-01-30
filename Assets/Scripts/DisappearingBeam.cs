@@ -3,15 +3,21 @@ using System.Collections;
 
 public class DisappearingBeam : MonoBehaviour
 {
-    public float disappearDelay = 2f;
-    private bool isPlayerOnBeam = false;
-    private Collider beamCollider;
-    private Renderer beamRenderer;
+    [SerializeField] Rigidbody rb;
+    [SerializeField] BridgeBehaviour bridgeBehaviour;
+    [SerializeField] float disappearDelay = 2f;
 
-    private float blinkSpeed = 0.2f;  
-    private Color blinkColor = Color.red;  
-    private Material beamMaterial;  
-    private Coroutine blinkCoroutine;  
+    public Rigidbody beamRb => rb;
+
+    bool isPlayerOnBeam = false;
+
+    Collider beamCollider;
+    Renderer beamRenderer;
+    Material beamMaterial;
+
+    float blinkSpeed = 1f;
+    Color blinkColor = Color.red;
+    Coroutine blinkCoroutine;
 
     const string PLAYER_TAG = "Player";
 
@@ -21,7 +27,11 @@ public class DisappearingBeam : MonoBehaviour
         beamRenderer = GetComponent<Renderer>();
         if (beamRenderer != null)
         {
-            beamMaterial = beamRenderer.material;  
+            beamMaterial = beamRenderer.material;
+        }
+        if (bridgeBehaviour == null)
+        {
+            bridgeBehaviour = GetComponentInParent<BridgeBehaviour>();
         }
     }
 
@@ -30,10 +40,11 @@ public class DisappearingBeam : MonoBehaviour
         if (collision.gameObject.CompareTag(PLAYER_TAG) && !isPlayerOnBeam)
         {
             isPlayerOnBeam = true;
+            bridgeBehaviour.IsPlayerOnBridge = true;
             Invoke(nameof(DisableBeam), disappearDelay);
             if (blinkCoroutine != null)
             {
-                StopCoroutine(blinkCoroutine);  
+                StopCoroutine(blinkCoroutine);
             }
             blinkCoroutine = StartCoroutine(BlinkBeam());
         }
@@ -44,6 +55,7 @@ public class DisappearingBeam : MonoBehaviour
         if (collision.gameObject.CompareTag(PLAYER_TAG))
         {
             isPlayerOnBeam = false;
+            bridgeBehaviour.IsPlayerOnBridge = false;
         }
     }
 
@@ -65,12 +77,12 @@ public class DisappearingBeam : MonoBehaviour
         while (elapsedTime < disappearDelay)
         {
             beamMaterial.color = (beamMaterial.color == blinkColor) ? Color.white : blinkColor;
-            elapsedTime += blinkSpeed;  
-            blinkSpeed = Mathf.Clamp(blinkSpeed - 0.01f, 0.05f, 0.2f); 
-            yield return new WaitForSeconds(blinkSpeed);  
+            elapsedTime += blinkSpeed;
+            blinkSpeed = Mathf.Clamp(blinkSpeed - 0.01f, 0.05f, 0.2f);
+            yield return new WaitForSeconds(blinkSpeed);
         }
 
-        DisableBeam();  
-        beamMaterial.color = Color.white;  
+        DisableBeam();
+        beamMaterial.color = Color.white;
     }
 }
