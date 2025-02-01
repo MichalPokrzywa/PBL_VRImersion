@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7299225015021338009}
   - component: {fileID: 4206844278163907930}
-  - component: {fileID: 9028724160746502049}
   m_Layer: 0
   m_Name: HeartRate
   m_TagString: Untagged
@@ -45,20 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a522882a3a32ab3478949f845683c535, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  port: 6547
   logFileName: HeartRate/hr_log_file.csv
---- !u!114 &9028724160746502049
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5430126740985844176}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1da35206656ff461f9ea567f58b84144, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  heartRateRefreshRate: 25
-  logFileName: HeartRate/hr_log_file.csv
-  websocketToken: <Request your Websocket Token>
-  hyperateID: internal-testing
+  writeToFileInsteadOfStore: 1

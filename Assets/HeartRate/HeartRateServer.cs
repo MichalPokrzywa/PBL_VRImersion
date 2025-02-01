@@ -4,28 +4,61 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using UnityEngine;
 
+namespace HR
+{
+/*
+* Usage:
+* 1. If needed specify <port>
+* 2. Choose if you want data to end written in file or stored in List by toggling writeToFileInsteadOfStore
+* 2. Data is accessible in public member HrReadings, each time the data is accessed, container is cleared
+* 3. To use with smartwatch: Devices must be on the same wifi network
+* 4. Smartwatch must have dedicated app installed:
+* 5. Enter, in Smartwatch app, IP and PORT, they are visible in Debug Log in Console after starting Unity project.
+* 6. Smartwatch HR measurement can be started by pressing "Connect" button, or stopped by clicking it again.
+*/
 public class HeartRateServer : MonoBehaviour
 {
     private HttpListener httpListener;
     private Thread serverThread;
     private ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
-   
+
+    private string localIP = "192.168.0.0";
+    [SerializeField]
+    int port = 6547;
+
     [SerializeField]
     string logFileName = "HeartRate/hr_log_file.csv";
     string logFilePath;
-    // private const string logFilePath = "./hr.txt";
+
+    private List<(string, string)> hrReadings = new List<(string, string)>();
+    public List<(string, string)> HrReadings
+    {
+        get
+        {
+            List<(string, string)> result = new List<(string, string)>(hrReadings);
+            hrReadings.Clear();
+            return result;
+        }
+        private set { hrReadings = value; }
+    }
+
+    [SerializeField]
+    bool writeToFileInsteadOfStore = true;
+
+    void OnDestroy()
+    {
+        StopServer();
+    }
 
     void Start()
     {
         logFilePath = Path.Combine(Application.dataPath, logFileName);
-        string localIP = GetLocalIPAddress();
-        int port = 6547; // Default port
-        Debug.Log($"This is your IP: {localIP}");
-        Debug.Log($"Port is {port}");
+        localIP = GetLocalIPAddress();
 
-        // Background thread for the server, communication with main thread is done via actions (mainThreadActions:ConcurrentQueue)
+        // Background thread for the server, communication with main thread can be done via actions (mainThreadActions:ConcurrentQueue)
         serverThread = new Thread(() => StartServer(port));
         serverThread.Start();
     }
@@ -48,7 +81,8 @@ public class HeartRateServer : MonoBehaviour
         httpListener = new HttpListener();
         httpListener.Prefixes.Add($"http://*:{port}/");
         httpListener.Start();
-        Debug.Log("Server started");
+        Debug.Log("Heart Rate Service Server started!");
+        Debug.Log($"Heart Rate Address for WearOS app: IP: {localIP} | PORT: {port}");
 
         while (httpListener.IsListening)
         {
@@ -59,7 +93,7 @@ public class HeartRateServer : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.LogError($"Error handling request: {e}");
+                Debug.LogError($"HeartRateServer: Error handling request: {e}");
             }
         }
     }
@@ -73,24 +107,25 @@ public class HeartRateServer : MonoBehaviour
         {
             if (context.Request.HttpMethod == "GET")
             {
-                Debug.Log("GET");
-
-                // responseString = ReadHeartRate();
-                // WriteToFile(responseString);
+                Debug.Log("HeartRateServer: GET, This should not happened...");
             }
             else if (context.Request.HttpMethod == "POST")
             {
-                Debug.Log("POST");
                 using (var reader = new StreamReader(context.Request.InputStream, context.Request.ContentEncoding))
                 {
                     string postData = reader.ReadToEnd();
-                    var dataParts = postData.Split('=');
+
+                    var dataParts = postData.Split(':');
 
                     if (dataParts.Length > 1)
                     {
-                        string heartRate = dataParts[1];
-                        Debug.Log($"Received BPM = {heartRate}");
-                        WriteToFile(heartRate);
+                        string heartRate = dataParts[1].Substring(0, dataParts[1].Length - 1);
+                        Debug.Log($"HeartRateServer: Received BPM = {heartRate}");
+                        string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
+                        string currentTime = DateTime.Now.ToString("HH:mm:ss");
+                        if(writeToFileInsteadOfStore)
+                            WriteToFile(heartRate, currentDate, currentTime);
+                        hrReadings.Add((heartRate, currentDate + " " + currentTime));
                         responseString = "OK";
                     }
                     else
@@ -108,7 +143,7 @@ public class HeartRateServer : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Error processing request: {ex}");
+            Debug.LogError($"HeartRateServer: Error processing request: {ex}");
             responseString = "Internal Server Error";
             statusCode = 500;
         }
@@ -128,14 +163,14 @@ public class HeartRateServer : MonoBehaviour
             httpListener.Stop();
             httpListener.Close();
             httpListener = null;
-            Debug.Log("Server stopped.");
+            Debug.Log("HeartRateServer: Server stopped.");
         }
 
         if (serverThread != null)
         {
             serverThread.Abort();
             serverThread = null;
-            Debug.Log("Thread stopped.");
+            Debug.Log("HeartRateServer: Thread stopped.");
         }
     }
 
@@ -152,24 +187,25 @@ public class HeartRateServer : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError($"Error getting local IP: {ex}");
+            Debug.LogError($"HeartRateServer: Error getting local IP: {ex}");
         }
         return localIP;
     }
 
-    private void WriteToFile(string rate)
+    private void WriteToFile(string rate, string currentDate, string currentTime)
     {
         try
         {
             using (StreamWriter writer = new StreamWriter(logFilePath, true)) 
             {
-            string content = "HR"+","+ rate +","+ DateTime.Now.ToString();
+            string content = "HR"+","+ rate +","+ currentDate + "," + currentTime;
             writer.WriteLine(content);
             }
         }
         catch (IOException e)
         {
-            Debug.LogError("An error occurred while writing to file: " + e.Message);
+            Debug.LogError("HeartRateServer: An error occurred while writing to file: " + e.Message);
         }
     }
+}
 }
