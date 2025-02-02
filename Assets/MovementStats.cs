@@ -99,18 +99,16 @@ public class MovementStats : MonoBehaviour
         onNearDangerousPlaceEnter += OnNearDangerousPlaceEntered;
         onNearDangerousPlaceExit += OnNearDangerousPlaceExited;
         onDangerousPlaceEnter += OnDangerousPlaceEntered;
-        StartMeasuring("Assets/movement_stats.json");
     }
 
     // Call it when user started game
     public void StartMeasuring(string fileName)
     {
+        ResetState();
         startTime = Time.time;
         isMeasuring = true;
         this.fileName = fileName;
-        ResetState();
     }
-
 
     // Call it when user finished game
     public void StopMeasuring()
