@@ -13,9 +13,9 @@ public class Timer : MonoBehaviour
 
     public Action OnTimerEnd;
 
-    void Start()
+    void Awake()
     {
-        ResetTimer();
+        timeIsRunning = false;
     }
 
     void Update()

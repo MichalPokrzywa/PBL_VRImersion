@@ -31,7 +31,7 @@ public class PlayerCollision : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnControllerColliderHit(ControllerColliderHit collision)
     {
         if (collision.collider.CompareTag(CHECKPOINT_TAG))
         {

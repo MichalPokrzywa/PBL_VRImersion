@@ -25,7 +25,7 @@ public class BridgeBehaviour : MonoBehaviour
     {
         foreach (var beam in beams)
         {
-            beam.EnableBeam();
+            beam?.EnableBeam();
         }
     }
 

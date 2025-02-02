@@ -12,6 +12,7 @@ public class GameLogic : MonoBehaviour
     [SerializeField] GameObject bridgesParent;
     [SerializeField] GameObject leftController;
     [SerializeField] GameObject rightController;
+    [SerializeField] MovementStats stats;
 
     public static GameObject LeftController { get; private set; }
     public static GameObject RightController { get; private set; }
@@ -86,6 +87,7 @@ public class GameLogic : MonoBehaviour
     {
         gameWinState = true;
         timer.StopTimer();
+        stats.StopMeasuring();
         UpdatePanel();
     }
 
@@ -93,7 +95,8 @@ public class GameLogic : MonoBehaviour
     {
         gameWinState = false;
         UpdatePanel();
-        RestartGame();
+        timer.StopTimer();
+        stats.StopMeasuring();
     }
 
     public void ResetAllBridges()
@@ -110,6 +113,7 @@ public class GameLogic : MonoBehaviour
         player.Restart();
         touchedCheckpoints.Clear();
         timer.ResetTimer();
+        stats.StartMeasuring("Assets/test.json");
     }
 
     void UpdatePanel()
@@ -126,14 +130,14 @@ public class GameLogic : MonoBehaviour
         }
         else
         {
-            infoPanel.ShowPanel(loseMssg);
+            infoPanel.ShowPanel(loseMssg, RestartGame);
         }
     }
 
     void UpdateComponentsState()
     {
         if (VRMode)
-            infoPanel.ShowPanel(startMssg);
+            infoPanel.ShowPanel(startMssg, RestartGame);
 
         foreach (GameObject component in VRComponents)
         {

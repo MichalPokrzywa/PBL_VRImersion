@@ -1,17 +1,19 @@
 using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class DisappearingBeam : MonoBehaviour
 {
     [SerializeField] Rigidbody rb;
     [SerializeField] BridgeBehaviour bridgeBehaviour;
     [SerializeField] float disappearDelay = 2f;
+    [SerializeField] Collider collisionCollider;
+    [SerializeField] Collider triggerCollider;
 
     public Rigidbody beamRb => rb;
 
     bool isPlayerOnBeam = false;
 
-    Collider beamCollider;
     Renderer beamRenderer;
     Material beamMaterial;
 
@@ -23,7 +25,8 @@ public class DisappearingBeam : MonoBehaviour
 
     void Start()
     {
-        beamCollider = GetComponent<Collider>();
+        triggerCollider = GetComponent<Collider>();
+        collisionCollider = GetComponentsInChildren<Collider>().Where(go => go.gameObject != this.gameObject).First();
         beamRenderer = GetComponent<Renderer>();
         if (beamRenderer != null)
         {
@@ -35,9 +38,9 @@ public class DisappearingBeam : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter(Collider collider)
     {
-        if (collision.gameObject.CompareTag(PLAYER_TAG) && !isPlayerOnBeam)
+        if (collider.gameObject.CompareTag(PLAYER_TAG) && !isPlayerOnBeam)
         {
             isPlayerOnBeam = true;
             bridgeBehaviour.IsPlayerOnBridge = true;
@@ -50,9 +53,9 @@ public class DisappearingBeam : MonoBehaviour
         }
     }
 
-    void OnCollisionExit(Collision collision)
+    void OnTriggerExit(Collider collider)
     {
-        if (collision.gameObject.CompareTag(PLAYER_TAG))
+        if (collider.gameObject.CompareTag(PLAYER_TAG))
         {
             isPlayerOnBeam = false;
             bridgeBehaviour.IsPlayerOnBridge = false;
@@ -61,13 +64,15 @@ public class DisappearingBeam : MonoBehaviour
 
     public void EnableBeam()
     {
-        beamCollider.enabled = true;
+        collisionCollider.enabled = true;
+        triggerCollider.enabled = true;
         beamRenderer.enabled = true;
     }
 
     void DisableBeam()
     {
-        beamCollider.enabled = false;
+        collisionCollider.enabled = false;
+        triggerCollider.enabled = false;
         beamRenderer.enabled = false;
     }
 
