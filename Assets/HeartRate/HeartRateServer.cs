@@ -12,7 +12,7 @@ namespace HR
 /*
 * Usage:
 * 1. If needed specify <port>
-* 2. Choose if you want data to end written in file or stored in List by toggling writeToFileInsteadOfStore
+* 2. Choose if you want data to end written in file or stored in List by toggling writeToFileInsteadOfMemoryStore
 * 2. Data is accessible in public member HrReadings, each time the data is accessed, container is cleared
 * 3. To use with smartwatch: Devices must be on the same wifi network
 * 4. Smartwatch must have dedicated app installed:
@@ -25,13 +25,15 @@ public class HeartRateServer : MonoBehaviour
     private Thread serverThread;
     private ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
 
-    private string localIP = "192.168.0.0";
+    public string currentBPM { get; private set; } = "0.0";
+    public string localIP { get; private set; } = "192.168.0.0";
+    
     [SerializeField]
-    int port = 6547;
+    public int port { get; private set; } = 6547;
 
     [SerializeField]
     string logFileName = "HeartRate/hr_log_file.csv";
-    string logFilePath;
+    private string logFilePath;
 
     private List<(string, string)> hrReadings = new List<(string, string)>();
     public List<(string, string)> HrReadings
@@ -46,7 +48,7 @@ public class HeartRateServer : MonoBehaviour
     }
 
     [SerializeField]
-    bool writeToFileInsteadOfStore = true;
+    bool writeToFileInsteadOfMemoryStore = true;
 
     void OnDestroy()
     {
@@ -123,10 +125,11 @@ public class HeartRateServer : MonoBehaviour
                         Debug.Log($"HeartRateServer: Received BPM = {heartRate}");
                         string currentDate = DateTime.Now.ToString("yyyy-MM-dd");
                         string currentTime = DateTime.Now.ToString("HH:mm:ss");
-                        if(writeToFileInsteadOfStore)
+                        if(writeToFileInsteadOfMemoryStore)
                             WriteToFile(heartRate, currentDate, currentTime);
                         hrReadings.Add((heartRate, currentDate + " " + currentTime));
                         responseString = "OK";
+                        currentBPM = heartRate;
                     }
                     else
                     {
@@ -198,7 +201,7 @@ public class HeartRateServer : MonoBehaviour
         {
             using (StreamWriter writer = new StreamWriter(logFilePath, true)) 
             {
-            string content = "HR"+","+ rate +","+ currentDate + "," + currentTime;
+            string content = $"HR,{rate},{currentDate},{currentTime}";
             writer.WriteLine(content);
             }
         }
