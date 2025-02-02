@@ -1065,7 +1065,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7401259364726987263}
-  - component: {fileID: 1748222016861356527}
+  - component: {fileID: 4387600295593121385}
   m_Layer: 2
   m_Name: Teleportation
   m_TagString: Untagged
@@ -1088,7 +1088,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 6981642495833523204}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1748222016861356527
+--- !u!114 &4387600295593121385
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1097,7 +1097,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2190828208922718286}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01f69dc1cb084aa42b2f2f8cd87bc770, type: 3}
+  m_Script: {fileID: 11500000, guid: d1a16165529f02446976aced07d16e1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Mediator: {fileID: 6640002710935096923}

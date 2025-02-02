@@ -95,7 +95,7 @@ public class MovementStats : MonoBehaviour
     void Start()
     {
         ResetState();
-        TeleportationProvider.OnTeleported += OnTeleport;
+        CustomTeleportationProvider.OnTeleported += OnTeleport;
         onNearDangerousPlaceEnter += OnNearDangerousPlaceEntered;
         onNearDangerousPlaceExit += OnNearDangerousPlaceExited;
         onDangerousPlaceEnter += OnDangerousPlaceEntered;
