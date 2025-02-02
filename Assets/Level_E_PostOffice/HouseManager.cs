@@ -4,13 +4,15 @@ using System.Linq;
 
 
 
-
 public class HouseManager : MonoBehaviour
 {
     // Lista przechowuj¹ca obiekty HouseStreet
     public List<HouseStreet> HouseList = new List<HouseStreet>();
     public GameObject PackagePrefab;
     public Transform PackegeSpawnPoint;
+    public MovementStats movementStats;
+    public int packagesToWin = 3;
+    private int packagesCounter = 0;
 
     // Metoda dodaj¹ca nowy dom do listy
     public void AddHouse(HouseStreet house)
@@ -48,7 +50,7 @@ public class HouseManager : MonoBehaviour
     // Przyk³ad u¿ycia w Start
     void Start()
     {
-        HouseStreet.onPackageDelivered += PackageSpawn;
+        HouseStreet.onPackageDelivered += PackageDeliverd;
         HouseList = FindObjectsByType<HouseStreet>(FindObjectsSortMode.InstanceID).ToList();
 
         foreach (HouseStreet house in HouseList)
@@ -56,6 +58,16 @@ public class HouseManager : MonoBehaviour
             house.SetMailbox(false);
         }
         // Losowanie i wyœwietlanie informacji o losowym domu
+        PackageSpawn();
+
+        movementStats.StartMeasuring($"Assets/Stats/Level_E_{System.DateTime.Now.ToString().Replace(' ', '_').Replace(':', '_')}.json");
+    }
+
+    private void PackageDeliverd()
+    {
+        if (packagesCounter == 4)
+            movementStats.StopMeasuring();
+        packagesCounter++;
         PackageSpawn();
     }
 
@@ -70,5 +82,10 @@ public class HouseManager : MonoBehaviour
             GameObject pack = Instantiate(PackagePrefab, PackegeSpawnPoint.position,Quaternion.identity);
             pack.GetComponent<Package>().SetPackage(randomHouse.HouseNumber, randomHouse.StreetColor);
         }
+    }
+    private void OnDestroy()
+    {
+        if (packagesCounter != 4)
+            movementStats.StopMeasuring();
     }
 }
