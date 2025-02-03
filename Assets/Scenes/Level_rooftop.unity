@@ -599,12 +599,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 530538359}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &700496988 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3138429002840286003, guid: e60baa3602aa94547981ebe0de29d420,
-    type: 3}
-  m_PrefabInstance: {fileID: 402245060}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &823862039 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6532560043144455602, guid: 28074aa44302fab48b07a724e1c90bd5,
@@ -1672,7 +1666,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementStats: {fileID: 1661138590}
-  player: {fileID: 700496988}
+  player: {fileID: 402245062}
 --- !u!114 &1661138593
 MonoBehaviour:
   m_ObjectHideFlags: 0

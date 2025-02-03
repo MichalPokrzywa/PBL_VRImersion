@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.SearchService;
+using UnityEngine.Rendering;
 
 
 
@@ -54,7 +55,7 @@ public class HouseManager : MonoBehaviour
     // Przyk³ad u¿ycia w Start
     void Start()
     {
-        Random.InitState(seed);
+        
         HouseStreet.onPackageDelivered += PackageDeliverd;
         HouseList = FindObjectsByType<HouseStreet>(FindObjectsSortMode.InstanceID).ToList();
         SetUp();
@@ -62,7 +63,9 @@ public class HouseManager : MonoBehaviour
 
     private void SetUp()
     {
+        Random.InitState(seed);
         player.transform.position = spawn.transform.position;
+        player.transform.rotation = spawn.transform.rotation;
         packagesCounter = 0;
         foreach (HouseStreet house in HouseList)
         {
@@ -77,12 +80,13 @@ public class HouseManager : MonoBehaviour
     private void PackageDeliverd()
     {
         packagesCounter++;
-        if (packagesCounter == 4)
+        if (packagesCounter == packagesToWin)
         {
             Debug.Log("All packages delivered");
             movementStats.StopMeasuring();
+            SetUp();
         }
-        PackageSpawn();
+        else PackageSpawn();
     }
 
     private void PackageSpawn()
@@ -99,7 +103,7 @@ public class HouseManager : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (packagesCounter != 4)
+        if (packagesCounter != packagesToWin)
             movementStats.StopMeasuring();
     }
 }

@@ -22,7 +22,6 @@ public class RooftopGameMa : MonoBehaviour
     private void SetUp()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        StartCollectingInfo();
     }
 
     private void StartCollectingInfo()
