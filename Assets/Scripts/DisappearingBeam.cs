@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Linq;
+using System;
 
 public class DisappearingBeam : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class DisappearingBeam : MonoBehaviour
     [SerializeField] Collider triggerCollider;
 
     public Rigidbody beamRb => rb;
+    public Action playerStandingOnDisabledBeam;
 
     bool isPlayerOnBeam = false;
 
@@ -74,6 +76,11 @@ public class DisappearingBeam : MonoBehaviour
         collisionCollider.enabled = false;
         triggerCollider.enabled = false;
         beamRenderer.enabled = false;
+
+        if (isPlayerOnBeam)
+        {
+            playerStandingOnDisabledBeam?.Invoke();
+        }
     }
 
     IEnumerator BlinkBeam()

@@ -1,13 +1,15 @@
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Audio;
 
 public class BridgeBehaviour : MonoBehaviour
 {
     [SerializeField] List<DisappearingBeam> disappearingBeams;
 
+    AudioSource audioSource;
     bool isPlayerOnBridge = false;
+
+    public Action forcePlayerPosUpdate;
 
     public bool IsPlayerOnBridge
     {
@@ -23,7 +25,6 @@ public class BridgeBehaviour : MonoBehaviour
         }
     }
 
-    AudioSource audioSource;
 
     void Awake()
     {
@@ -32,6 +33,7 @@ public class BridgeBehaviour : MonoBehaviour
         foreach (var beam in GetComponentsInChildren<DisappearingBeam>())
         {
             disappearingBeams.Add(beam);
+            beam.playerStandingOnDisabledBeam += PlayerStandingOnDisabledBeam;
         }
     }
 
@@ -57,7 +59,11 @@ public class BridgeBehaviour : MonoBehaviour
         // calculate the angle of inclination of the bridge
         Vector3 leftHandPos = GameLogic.LeftController.transform.position;
         Vector3 rightHandPos = GameLogic.RightController.transform.position;
+    }
 
+    void PlayerStandingOnDisabledBeam()
+    {
+        forcePlayerPosUpdate?.Invoke();
     }
 
 }

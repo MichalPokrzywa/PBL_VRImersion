@@ -39,11 +39,19 @@ public class GameLogic : MonoBehaviour
     PlayerCollision player;
     BridgeBehaviour[] bridges;
     bool gameWinState = false;
-    bool gameStarted = false;
+    bool gameActive = false;
 
     void Awake()
     {
         bridges = bridgesParent.GetComponentsInChildren<BridgeBehaviour>();
+
+        if (VRMode)
+        {
+            foreach (var bridge in bridges)
+            {
+                bridge.forcePlayerPosUpdate += ForcePlayerPosUpdate;
+            }
+        }
 
         LeftController = leftController;
         RightController = rightController;
@@ -66,8 +74,15 @@ public class GameLogic : MonoBehaviour
             player.onCollisionWithCheckpoint -= OnCheckpointTouched;
             player.onCollisionWithWater -= OnGameLost;
         }
+
         if (timer != null)
             timer.OnTimerEnd -= OnGameLost;
+
+        foreach (var bridge in bridges)
+        {
+            if (bridge != null)
+                bridge.forcePlayerPosUpdate -= ForcePlayerPosUpdate;
+        }
     }
 
     void OnCheckpointTouched(int checkpointId)
@@ -87,9 +102,11 @@ public class GameLogic : MonoBehaviour
 
     void OnGameWin()
     {
-        if (!gameStarted)
+        if (!gameActive)
             return;
 
+        Debug.Log("<color=yellow>GAME WIN!</color>");
+        gameActive = false;
         gameWinState = true;
         timer.StopTimer();
         stats.StopMeasuring();
@@ -98,9 +115,11 @@ public class GameLogic : MonoBehaviour
 
     void OnGameLost()
     {
-        if (!gameStarted)
+        if (!gameActive)
             return;
 
+        Debug.Log("<color=yellow>GAME LOST!</color>");
+        gameActive = false;
         gameWinState = false;
         timer.StopTimer();
         stats.StopMeasuring();
@@ -118,11 +137,16 @@ public class GameLogic : MonoBehaviour
     void RestartGame()
     {
         Debug.Log("<color=yellow>GAME STARTED!</color>");
-        gameStarted = true;
         ResetAllBridges();
         touchedCheckpoints.Clear();
-        player.Restart();
+        player.RestartPosition();
         timer.ResetTimer();
+        Invoke(nameof(SetGameActive), 0.2f);
+    }
+
+    void SetGameActive()
+    {
+        gameActive = true;
         stats.StartMeasuring(jsonFilePath);
     }
 
@@ -135,7 +159,7 @@ public class GameLogic : MonoBehaviour
 
         if (gameWinState)
         {
-            string mssg = winMssg + $"\nCzas: {timer.TimerValue:0.00}s";
+            string mssg = winMssg + $" Czas: {timer.TimerValue:0.00}s";
             infoPanel.ShowPanel(winMssg, RestartGame);
         }
         else
@@ -157,5 +181,10 @@ public class GameLogic : MonoBehaviour
 
         xrInput.enabled = VRMode;
         input.enabled = !VRMode;
+    }
+
+    void ForcePlayerPosUpdate()
+    {
+       playerVR.ForcePositionUpdate();
     }
 }

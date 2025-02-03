@@ -15288,11 +15288,6 @@ PrefabInstance:
       propertyPath: m_BackGroundColor.r
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1178791450436251564, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
-        type: 3}
-      propertyPath: m_RequestedTrackingOriginMode
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1717954561962503725, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
         type: 3}
       propertyPath: m_Name
@@ -15365,22 +15360,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6232745470614056090, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
         type: 3}
-      propertyPath: m_Height
-      value: 1.79
-      objectReference: {fileID: 0}
-    - target: {fileID: 6232745470614056090, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
-        type: 3}
       propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6232745470614056090, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
-        type: 3}
-      propertyPath: m_Center.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6232745470614056090, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
-        type: 3}
-      propertyPath: m_StepOffset
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6501755809687671949, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
@@ -18730,7 +18710,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPosition: {x: 533, y: 100, z: 468.1}
   parentXR: {fileID: 1532520605}
+  controller: {fileID: 1532520616}
   VRMode: 1
+--- !u!143 &1532520616 stripped
+CharacterController:
+  m_CorrespondingSourceObject: {fileID: 6232745470614056090, guid: f6336ac4ac8b4d34bc5072418cdc62a0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1364002831}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1537548561 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5773399876510048669, guid: 84221c5d9e2cf0b488ddb37026596b45,
@@ -19926,6 +19913,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPosition: {x: 533, y: 100, z: 468.1}
   parentXR: {fileID: 1532520605}
+  controller: {fileID: 0}
   VRMode: 1
 --- !u!54 &1604775991
 Rigidbody:
@@ -21724,6 +21712,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startPosition: {x: 531.4, y: 104.2, z: 466.2}
   parentXR: {fileID: 0}
+  controller: {fileID: 0}
   VRMode: 1
 --- !u!1001 &1788624621
 PrefabInstance:
