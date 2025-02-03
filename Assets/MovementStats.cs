@@ -78,8 +78,8 @@ public class MovementStats : MonoBehaviour
     {
         public string date;
         public float timeDuration;
-        public float maxVelocity;
-        public float avgVelocity;
+        public Vector3 maxVelocity;
+        public Vector3 avgVelocity;
         public float totalHeadRotation;
         public float totalBodyRotation;
         public float maxHeadRotationSpeed;
@@ -291,12 +291,28 @@ public class MovementStats : MonoBehaviour
 
     void SerializeData()
     {
+        float maxLength = 0;
+        Vector3 maxVelocity = Vector3.zero;
+        Vector3 avgVelocity = Vector3.zero;
+        foreach (var s in samples)
+        {
+            if (s.movement.velocity.magnitude > maxLength)
+            {
+                maxLength = s.movement.velocity.magnitude;
+                maxVelocity = s.movement.velocity;
+            }
+
+            avgVelocity += s.movement.velocity;
+        }
+        avgVelocity /= samples.Count;
+
+
         var fileData = new FileData
         {
             date = DateTime.Now.ToString(),
             timeDuration = endTime - startTime,
-            maxVelocity = samples.Max(s => s.movement.velocity.magnitude),
-            avgVelocity = samples.Average(s => s.movement.velocity.magnitude),
+            maxVelocity = maxVelocity,
+            avgVelocity = avgVelocity,
             totalHeadRotation = samples.Sum(s => s.rotation.headRotationAngle),
             totalBodyRotation = samples.Sum(s => s.rotation.bodyRotationAngle),
             maxHeadRotationSpeed = samples.Max(s => s.rotation.headRotationSpeed),
