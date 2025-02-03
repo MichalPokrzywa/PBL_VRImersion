@@ -1000,8 +1000,8 @@ Transform:
   m_GameObject: {fileID: 8244758533328722925}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.35, y: 44.41, z: -124.3317}
-  m_LocalScale: {x: 10, y: 3, z: 1.8934405}
+  m_LocalPosition: {x: 9.35, y: 44.41, z: -124.3244}
+  m_LocalScale: {x: 10, y: 3, z: 0.9863293}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 9115129147493888221}
@@ -1264,6 +1264,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129146070732978
 GameObject:
   m_ObjectHideFlags: 0
@@ -1434,6 +1436,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129146174170127
 GameObject:
   m_ObjectHideFlags: 0
@@ -1604,6 +1608,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129146383803637
 GameObject:
   m_ObjectHideFlags: 0
@@ -1774,6 +1780,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129146460461226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1944,6 +1952,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129146652923143
 GameObject:
   m_ObjectHideFlags: 0
@@ -2114,6 +2124,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129146704673399
 GameObject:
   m_ObjectHideFlags: 0
@@ -2284,6 +2296,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129146737089002
 GameObject:
   m_ObjectHideFlags: 0
@@ -2561,6 +2575,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129146989868252
 GameObject:
   m_ObjectHideFlags: 0
@@ -2731,6 +2747,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129147051897866
 GameObject:
   m_ObjectHideFlags: 0
@@ -2901,6 +2919,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129147116615810
 GameObject:
   m_ObjectHideFlags: 0
@@ -3071,6 +3091,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129147210657874
 GameObject:
   m_ObjectHideFlags: 0
@@ -3241,6 +3263,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129147298865641
 GameObject:
   m_ObjectHideFlags: 0
@@ -3501,6 +3525,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129147493888210
 GameObject:
   m_ObjectHideFlags: 0
@@ -3565,23 +3591,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baf42b9539a04014ebb9d4ab7f60cf00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  beams:
-  - {fileID: 4193052561811322845}
-  - {fileID: 5121428900833036126}
-  - {fileID: 6315459951358849195}
-  - {fileID: 2446175354875167889}
-  - {fileID: 2510243961525249804}
-  - {fileID: 9219747479864368863}
-  - {fileID: 267792430823920881}
-  - {fileID: 8008423143060926966}
-  - {fileID: 3834914712512494358}
-  - {fileID: 3313288544530712680}
-  - {fileID: 1766699325216602848}
-  - {fileID: 8946886250617664193}
-  - {fileID: 5891162599625723849}
-  - {fileID: 4726366095079599205}
-  - {fileID: 5971351437588984235}
-  - {fileID: 5226597908300963371}
+  disappearingBeams: []
 --- !u!1 &9115129147768634807
 GameObject:
   m_ObjectHideFlags: 0
@@ -3752,6 +3762,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129147818157221
 GameObject:
   m_ObjectHideFlags: 0
@@ -3922,6 +3934,8 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}
 --- !u!1 &9115129147918701426
 GameObject:
   m_ObjectHideFlags: 0
@@ -4092,3 +4106,5 @@ MonoBehaviour:
   rb: {fileID: 9115129146018036554}
   bridgeBehaviour: {fileID: 4063397613742470890}
   disappearDelay: 2
+  collisionCollider: {fileID: 0}
+  triggerCollider: {fileID: 0}

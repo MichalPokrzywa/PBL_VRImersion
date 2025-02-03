@@ -13,6 +13,7 @@ public class GameLogic : MonoBehaviour
     [SerializeField] GameObject leftController;
     [SerializeField] GameObject rightController;
     [SerializeField] MovementStats stats;
+    [SerializeField] string jsonFilePath = "Assets/levelD.json";
 
     public static GameObject LeftController { get; private set; }
     public static GameObject RightController { get; private set; }
@@ -38,6 +39,7 @@ public class GameLogic : MonoBehaviour
     PlayerCollision player;
     BridgeBehaviour[] bridges;
     bool gameWinState = false;
+    bool gameStarted = false;
 
     void Awake()
     {
@@ -85,6 +87,9 @@ public class GameLogic : MonoBehaviour
 
     void OnGameWin()
     {
+        if (!gameStarted)
+            return;
+
         gameWinState = true;
         timer.StopTimer();
         stats.StopMeasuring();
@@ -93,10 +98,13 @@ public class GameLogic : MonoBehaviour
 
     void OnGameLost()
     {
+        if (!gameStarted)
+            return;
+
         gameWinState = false;
-        UpdatePanel();
         timer.StopTimer();
         stats.StopMeasuring();
+        UpdatePanel();
     }
 
     public void ResetAllBridges()
@@ -109,11 +117,13 @@ public class GameLogic : MonoBehaviour
 
     void RestartGame()
     {
+        Debug.Log("<color=yellow>GAME STARTED!</color>");
+        gameStarted = true;
         ResetAllBridges();
-        player.Restart();
         touchedCheckpoints.Clear();
+        player.Restart();
         timer.ResetTimer();
-        stats.StartMeasuring("Assets/test.json");
+        stats.StartMeasuring(jsonFilePath);
     }
 
     void UpdatePanel()

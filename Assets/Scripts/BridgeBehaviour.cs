@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class BridgeBehaviour : MonoBehaviour
 {
-    [SerializeField] List<DisappearingBeam> beams;
+    [SerializeField] List<DisappearingBeam> disappearingBeams;
 
     bool isPlayerOnBridge = false;
 
@@ -21,9 +23,21 @@ public class BridgeBehaviour : MonoBehaviour
         }
     }
 
+    AudioSource audioSource;
+
+    void Awake()
+    {
+        audioSource = GetComponentInParent<AudioSource>();
+        disappearingBeams = new List<DisappearingBeam>();
+        foreach (var beam in GetComponentsInChildren<DisappearingBeam>())
+        {
+            disappearingBeams.Add(beam);
+        }
+    }
+
     public void ResetBridgeState()
     {
-        foreach (var beam in beams)
+        foreach (var beam in disappearingBeams)
         {
             beam?.EnableBeam();
         }
@@ -36,6 +50,9 @@ public class BridgeBehaviour : MonoBehaviour
             // reset state - balance the bridge
             return;
         }
+
+        if (!audioSource.isPlaying)
+            audioSource.Play();
 
         // calculate the angle of inclination of the bridge
         Vector3 leftHandPos = GameLogic.LeftController.transform.position;
