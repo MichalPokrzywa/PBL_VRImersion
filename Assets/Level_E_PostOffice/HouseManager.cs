@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.SearchService;
 
 
 
@@ -8,11 +9,14 @@ public class HouseManager : MonoBehaviour
 {
     // Lista przechowuj¹ca obiekty HouseStreet
     public List<HouseStreet> HouseList = new List<HouseStreet>();
+    public int seed = 123;
     public GameObject PackagePrefab;
     public Transform PackegeSpawnPoint;
     public MovementStats movementStats;
     public int packagesToWin = 3;
     private int packagesCounter = 0;
+    public GameObject spawn;
+    public GameObject player;
 
     // Metoda dodaj¹ca nowy dom do listy
     public void AddHouse(HouseStreet house)
@@ -50,9 +54,16 @@ public class HouseManager : MonoBehaviour
     // Przyk³ad u¿ycia w Start
     void Start()
     {
+        Random.InitState(seed);
         HouseStreet.onPackageDelivered += PackageDeliverd;
         HouseList = FindObjectsByType<HouseStreet>(FindObjectsSortMode.InstanceID).ToList();
+        SetUp();
+    }
 
+    private void SetUp()
+    {
+        player.transform.position = spawn.transform.position;
+        packagesCounter = 0;
         foreach (HouseStreet house in HouseList)
         {
             house.SetMailbox(false);
@@ -60,14 +71,17 @@ public class HouseManager : MonoBehaviour
         // Losowanie i wyœwietlanie informacji o losowym domu
         PackageSpawn();
 
-        movementStats.StartMeasuring($"Assets/Stats/Level_E_{System.DateTime.Now.ToString().Replace(' ', '_').Replace(':', '_')}.json");
+        movementStats.StartMeasuring($"Assets/Stats/Level_E_Seed{seed}_{System.DateTime.Now.ToString().Replace(' ', '_').Replace(':', '_')}.json");
     }
 
     private void PackageDeliverd()
     {
-        if (packagesCounter == 4)
-            movementStats.StopMeasuring();
         packagesCounter++;
+        if (packagesCounter == 4)
+        {
+            Debug.Log("All packages delivered");
+            movementStats.StopMeasuring();
+        }
         PackageSpawn();
     }
 
