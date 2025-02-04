@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor.SearchService;
 using UnityEngine.Rendering;
+using UnityEngine.SceneManagement;
 
 
 
@@ -64,8 +65,6 @@ public class HouseManager : MonoBehaviour
     private void SetUp()
     {
         Random.InitState(seed);
-        player.transform.position = spawn.transform.position;
-        player.transform.rotation = spawn.transform.rotation;
         packagesCounter = 0;
         foreach (HouseStreet house in HouseList)
         {
@@ -77,6 +76,11 @@ public class HouseManager : MonoBehaviour
         movementStats.StartMeasuring($"Assets/Stats/Level_E_Seed{seed}_{System.DateTime.Now.ToString().Replace(' ', '_').Replace(':', '_')}.json");
     }
 
+    private void Reset()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     private void PackageDeliverd()
     {
         packagesCounter++;
@@ -84,7 +88,7 @@ public class HouseManager : MonoBehaviour
         {
             Debug.Log("All packages delivered");
             movementStats.StopMeasuring();
-            SetUp();
+            Reset();
         }
         else PackageSpawn();
     }
