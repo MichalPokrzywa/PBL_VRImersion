@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -5,6 +6,7 @@ public class PlayerCollision : MonoBehaviour
 {
     [SerializeField] Vector3 startPosition;
     [SerializeField] GameObject parentXR;
+    [SerializeField] CharacterController controller;
 
     public UnityAction<int> onCollisionWithCheckpoint;
     public UnityAction onCollisionWithWater;
@@ -18,7 +20,7 @@ public class PlayerCollision : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Restart();
+        RestartPosition();
     }
 
     void FixedUpdate()
@@ -31,7 +33,7 @@ public class PlayerCollision : MonoBehaviour
         }
     }
 
-    void OnCollisionEnter(Collision collision)
+    void OnControllerColliderHit(ControllerColliderHit collision)
     {
         if (collision.collider.CompareTag(CHECKPOINT_TAG))
         {
@@ -47,11 +49,17 @@ public class PlayerCollision : MonoBehaviour
         else if (collision.collider.CompareTag(WATER_TAG))
         {
             onCollisionWithWater?.Invoke();
-            Restart();
+            RestartPosition();
         }
     }
 
-    public void Restart()
+    public void ForcePositionUpdate()
+    {
+        controller.SimpleMove(Vector3.down * 0.6f);
+    }
+
+
+    public void RestartPosition()
     {
         if (VRMode)
             parentXR.transform.position = startPosition;

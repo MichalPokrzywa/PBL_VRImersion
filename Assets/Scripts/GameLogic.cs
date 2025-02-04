@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Windows;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
 public class GameLogic : MonoBehaviour
@@ -11,7 +9,14 @@ public class GameLogic : MonoBehaviour
     [SerializeField] int requiredTouches = 3;
     [SerializeField] VRClickablePanel infoPanel;
     [SerializeField] Timer timer;
-    [SerializeField] GameObject environment;
+    [SerializeField] GameObject bridgesParent;
+    [SerializeField] GameObject leftController;
+    [SerializeField] GameObject rightController;
+    [SerializeField] MovementStats stats;
+    [SerializeField] string jsonFilePath = "Assets/levelD.json";
+
+    public static GameObject LeftController { get; private set; }
+    public static GameObject RightController { get; private set; }
 
     [Header("Game Mode")]
     [SerializeField] bool VRMode;
@@ -31,13 +36,25 @@ public class GameLogic : MonoBehaviour
     const string loseMssg = "Przegra³eœ! Spróbuj jeszcze raz.";
 
     HashSet<int> touchedCheckpoints = new HashSet<int>();
-    DisappearingBeam[] beams;
     PlayerCollision player;
+    BridgeBehaviour[] bridges;
     bool gameWinState = false;
+    bool gameActive = false;
 
     void Awake()
     {
-        beams = environment.GetComponentsInChildren<DisappearingBeam>();
+        bridges = bridgesParent.GetComponentsInChildren<BridgeBehaviour>();
+
+        if (VRMode)
+        {
+            foreach (var bridge in bridges)
+            {
+                bridge.forcePlayerPosUpdate += ForcePlayerPosUpdate;
+            }
+        }
+
+        LeftController = leftController;
+        RightController = rightController;
 
         // Use playerCollider component based on VR or standalone mode
         player = VRMode ? playerVR : playerKeyboard;
@@ -57,8 +74,15 @@ public class GameLogic : MonoBehaviour
             player.onCollisionWithCheckpoint -= OnCheckpointTouched;
             player.onCollisionWithWater -= OnGameLost;
         }
+
         if (timer != null)
             timer.OnTimerEnd -= OnGameLost;
+
+        foreach (var bridge in bridges)
+        {
+            if (bridge != null)
+                bridge.forcePlayerPosUpdate -= ForcePlayerPosUpdate;
+        }
     }
 
     void OnCheckpointTouched(int checkpointId)
@@ -78,32 +102,52 @@ public class GameLogic : MonoBehaviour
 
     void OnGameWin()
     {
+        if (!gameActive)
+            return;
+
+        Debug.Log("<color=yellow>GAME WIN!</color>");
+        gameActive = false;
         gameWinState = true;
         timer.StopTimer();
+        stats.StopMeasuring();
         UpdatePanel();
     }
 
     void OnGameLost()
     {
+        if (!gameActive)
+            return;
+
+        Debug.Log("<color=yellow>GAME LOST!</color>");
+        gameActive = false;
         gameWinState = false;
+        timer.StopTimer();
+        stats.StopMeasuring();
         UpdatePanel();
-        RestartGame();
     }
 
-    public void ResetBeams()
+    public void ResetAllBridges()
     {
-        foreach (DisappearingBeam beam in beams)
+        foreach (BridgeBehaviour bridge in bridges)
         {
-            beam.EnableBeam();
+            bridge.ResetBridgeState();
         }
     }
 
     void RestartGame()
     {
-        ResetBeams();
-        player.Restart();
+        Debug.Log("<color=yellow>GAME STARTED!</color>");
+        ResetAllBridges();
         touchedCheckpoints.Clear();
+        player.RestartPosition();
         timer.ResetTimer();
+        Invoke(nameof(SetGameActive), 0.2f);
+    }
+
+    void SetGameActive()
+    {
+        gameActive = true;
+        stats.StartMeasuring(jsonFilePath);
     }
 
     void UpdatePanel()
@@ -115,18 +159,19 @@ public class GameLogic : MonoBehaviour
 
         if (gameWinState)
         {
+            string mssg = winMssg + $" Czas: {timer.TimerValue:0.00}s";
             infoPanel.ShowPanel(winMssg, RestartGame);
         }
         else
         {
-            infoPanel.ShowPanel(loseMssg);
+            infoPanel.ShowPanel(loseMssg, RestartGame);
         }
     }
 
     void UpdateComponentsState()
     {
         if (VRMode)
-            infoPanel.ShowPanel(startMssg);
+            infoPanel.ShowPanel(startMssg, RestartGame);
 
         foreach (GameObject component in VRComponents)
         {
@@ -136,5 +181,10 @@ public class GameLogic : MonoBehaviour
 
         xrInput.enabled = VRMode;
         input.enabled = !VRMode;
+    }
+
+    void ForcePlayerPosUpdate()
+    {
+       playerVR.ForcePositionUpdate();
     }
 }

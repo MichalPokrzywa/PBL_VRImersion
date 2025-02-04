@@ -5,17 +5,13 @@ using System;
 public class Timer : MonoBehaviour
 {
     [SerializeField] float targetTime = 30;
-    [SerializeField] bool timeIsRunning = true;
+    [SerializeField] bool timeIsRunning = false;
     [SerializeField] TMP_Text timeText;
 
     float timer;
+    public float TimerValue => timer;
 
     public Action OnTimerEnd;
-
-    void Start()
-    {
-        ResetTimer();
-    }
 
     void Update()
     {
@@ -37,8 +33,8 @@ public class Timer : MonoBehaviour
 
     public void ResetTimer()
     {
-        timeIsRunning = true;
         timer = targetTime;
+        timeIsRunning = true;
     }
 
     public void StopTimer()
