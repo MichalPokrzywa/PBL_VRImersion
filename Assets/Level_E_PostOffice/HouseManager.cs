@@ -4,12 +4,14 @@ using System.Linq;
 using UnityEditor.SearchService;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
+using System;
 
 
 
 public class HouseManager : MonoBehaviour
 {
     // Lista przechowuj¹ca obiekty HouseStreet
+    [SerializeField] VRClickablePanel infoPanel;
     public List<HouseStreet> HouseList = new List<HouseStreet>();
     public int seed = 123;
     public GameObject PackagePrefab;
@@ -19,6 +21,9 @@ public class HouseManager : MonoBehaviour
     private int packagesCounter = 0;
     public GameObject spawn;
     public GameObject player;
+    private bool gameWinState = false;
+    private string winMssg = "Brawo dostarczy³eœ wszystkie paczki. DOBRA ROBOTA!";
+    private string startMssg = "Dostarcz wszystkie przesy³ki do odpowiednich domów. Powodzenia!";
 
     // Metoda dodaj¹ca nowy dom do listy
     public void AddHouse(HouseStreet house)
@@ -36,7 +41,7 @@ public class HouseManager : MonoBehaviour
         }
 
         // Losowanie indeksu
-        int randomIndex = Random.Range(0, HouseList.Count);
+        int randomIndex = UnityEngine.Random.Range(0, HouseList.Count);
         return randomIndex;
     }
 
@@ -56,7 +61,6 @@ public class HouseManager : MonoBehaviour
     // Przyk³ad u¿ycia w Start
     void Start()
     {
-        
         HouseStreet.onPackageDelivered += PackageDeliverd;
         HouseList = FindObjectsByType<HouseStreet>(FindObjectsSortMode.InstanceID).ToList();
         SetUp();
@@ -64,7 +68,9 @@ public class HouseManager : MonoBehaviour
 
     private void SetUp()
     {
-        Random.InitState(seed);
+        gameWinState = false;
+        infoPanel.ShowPanel(startMssg);
+        UnityEngine.Random.InitState(seed);
         packagesCounter = 0;
         foreach (HouseStreet house in HouseList)
         {
@@ -86,9 +92,10 @@ public class HouseManager : MonoBehaviour
         packagesCounter++;
         if (packagesCounter == packagesToWin)
         {
+            gameWinState = true;
+            UpdatePanel();
             Debug.Log("All packages delivered");
             movementStats.StopMeasuring();
-            Reset();
         }
         else PackageSpawn();
     }
@@ -109,5 +116,11 @@ public class HouseManager : MonoBehaviour
     {
         if (packagesCounter != packagesToWin)
             movementStats.StopMeasuring();
+    }
+
+    void UpdatePanel()
+    {
+        string mssg = winMssg;
+        infoPanel.ShowPanel(winMssg, Reset);
     }
 }
