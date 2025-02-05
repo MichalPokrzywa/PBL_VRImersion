@@ -9,7 +9,7 @@ public class Timer : MonoBehaviour
     [SerializeField] TMP_Text timeText;
 
     float timer;
-    public float TimerValue => timer;
+    public string TimerValue => FormatTime(timer);
 
     public Action OnTimerEnd;
 
@@ -35,6 +35,7 @@ public class Timer : MonoBehaviour
     {
         timer = targetTime;
         timeIsRunning = true;
+        DisplayTime(timer);
     }
 
     public void StopTimer()
@@ -49,10 +50,15 @@ public class Timer : MonoBehaviour
 
     void DisplayTime(float timeToDisplay)
     {
-        timeToDisplay += 1;
-        float minutes = Mathf.FloorToInt(timeToDisplay / 60);
-        float seconds = Mathf.FloorToInt(timeToDisplay % 60);
-        timeText.text = string.Format("{0:00} : {1:00}", minutes, seconds);
+        timeToDisplay = Mathf.Max(timeToDisplay, 0);
+        timeText.text = FormatTime(timeToDisplay);
+    }
+
+    string FormatTime(float time)
+    {
+        int minutes = Mathf.FloorToInt(time / 60);
+        int seconds = Mathf.FloorToInt(time % 60);
+        return string.Format("{0:00}:{1:00}", minutes, seconds);
     }
 
 }

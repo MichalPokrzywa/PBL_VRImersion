@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.XR.Interaction.Toolkit.UI;
@@ -10,41 +12,43 @@ public class GameLogic : MonoBehaviour
     [SerializeField] VRClickablePanel infoPanel;
     [SerializeField] Timer timer;
     [SerializeField] GameObject bridgesParent;
-    [SerializeField] GameObject leftController;
-    [SerializeField] GameObject rightController;
+    [SerializeField] CheckpointManager checkpointManager;
+    [SerializeField] StartMovementBlockade blockade;
     [SerializeField] MovementStats stats;
-    [SerializeField] string jsonFilePath = "Assets/levelD.json";
-
-    public static GameObject LeftController { get; private set; }
-    public static GameObject RightController { get; private set; }
 
     [Header("Game Mode")]
     [SerializeField] bool VRMode;
+    [SerializeField] bool katVR = false;
 
     [Header("Keyboard Movement")]
-    [SerializeField] PlayerCollision playerKeyboard;
+    [SerializeField] PlayerBehaviour playerKeyboard;
     [SerializeField] GameObject keyboardMovementController;
     [SerializeField] StandaloneInputModule input;
 
     [Header("VR Movement")]
-    [SerializeField] PlayerCollision playerVR;
+    [SerializeField] PlayerBehaviour playerVR;
     [SerializeField] XRUIInputModule xrInput;
     [SerializeField] List<GameObject> VRComponents;
 
-    const string startMssg = "Dotrzyj do wszystkich checkpointów w ustalonym czasie. Powodzenia!";
-    const string winMssg = "Gratulacje! Wygra³eœ!";
+    string startMssg;
+    const string winMssg = "Wygra³eœ!";
     const string loseMssg = "Przegra³eœ! Spróbuj jeszcze raz.";
 
     HashSet<int> touchedCheckpoints = new HashSet<int>();
-    PlayerCollision player;
+    PlayerBehaviour player;
     BridgeBehaviour[] bridges;
     bool gameWinState = false;
     bool gameActive = false;
 
-    void Awake()
+    void Start()
     {
-        bridges = bridgesParent.GetComponentsInChildren<BridgeBehaviour>();
+        string checkpointInfo = requiredTouches.ToString();
+        if (requiredTouches == 1)
+            checkpointInfo += " checkpointa";
+        else checkpointInfo += " checkpointów";
+        startMssg = "Dotrzyj do " + checkpointInfo + " przed up³ywem czasu! Im mocniej wychylisz ga³kê kontrolera, tym szybciej siê poruszasz.";
 
+        bridges = bridgesParent.GetComponentsInChildren<BridgeBehaviour>();
         if (VRMode)
         {
             foreach (var bridge in bridges)
@@ -52,9 +56,6 @@ public class GameLogic : MonoBehaviour
                 bridge.forcePlayerPosUpdate += ForcePlayerPosUpdate;
             }
         }
-
-        LeftController = leftController;
-        RightController = rightController;
 
         // Use playerCollider component based on VR or standalone mode
         player = VRMode ? playerVR : playerKeyboard;
@@ -65,6 +66,7 @@ public class GameLogic : MonoBehaviour
         timer.OnTimerEnd += OnGameLost;
 
         UpdateComponentsState();
+        RestartGame();
     }
 
     void OnDestroy()
@@ -109,8 +111,9 @@ public class GameLogic : MonoBehaviour
         gameActive = false;
         gameWinState = true;
         timer.StopTimer();
-        stats.StopMeasuring();
-        UpdatePanel();
+        stats.StopMeasuring(true);
+        string mssg = winMssg + $" Twój czas: {timer.TimerValue}";
+        infoPanel.ShowPanel(mssg, RestartGame);
     }
 
     void OnGameLost()
@@ -122,8 +125,8 @@ public class GameLogic : MonoBehaviour
         gameActive = false;
         gameWinState = false;
         timer.StopTimer();
-        stats.StopMeasuring();
-        UpdatePanel();
+        stats.StopMeasuring(false);
+        RestartGame();
     }
 
     public void ResetAllBridges()
@@ -136,43 +139,34 @@ public class GameLogic : MonoBehaviour
 
     void RestartGame()
     {
-        Debug.Log("<color=yellow>GAME STARTED!</color>");
         ResetAllBridges();
+        blockade.BlockMovement();
+        checkpointManager.ActivateCheckpoints();
         touchedCheckpoints.Clear();
         player.RestartPosition();
+        if (VRMode)
+            infoPanel.ShowPanel(startMssg, ActivateGame);
+    }
+
+    void ActivateGame()
+    {
+        Debug.Log("<color=yellow>GAME STARTED!</color>");
         timer.ResetTimer();
-        Invoke(nameof(SetGameActive), 0.2f);
-    }
-
-    void SetGameActive()
-    {
+        blockade.UnblockMovement();
         gameActive = true;
-        stats.StartMeasuring(jsonFilePath);
-    }
 
-    void UpdatePanel()
-    {
-        if (!VRMode)
-        {
-            return;
-        }
+        StringBuilder sb = new StringBuilder();
+        sb.Append("LevelD_");
+        sb.Append(katVR ? "KatVR_" : "VR_");
+        string dateTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+        sb.Append(dateTime);
+        string filePath = $"Assets/{sb}.json";
 
-        if (gameWinState)
-        {
-            string mssg = winMssg + $" Czas: {timer.TimerValue:0.00}s";
-            infoPanel.ShowPanel(winMssg, RestartGame);
-        }
-        else
-        {
-            infoPanel.ShowPanel(loseMssg, RestartGame);
-        }
+        stats.StartMeasuring(filePath);
     }
 
     void UpdateComponentsState()
     {
-        if (VRMode)
-            infoPanel.ShowPanel(startMssg, RestartGame);
-
         foreach (GameObject component in VRComponents)
         {
             component.SetActive(VRMode);
