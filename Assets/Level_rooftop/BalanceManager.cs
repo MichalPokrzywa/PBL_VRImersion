@@ -82,7 +82,7 @@ public class BalanceManager : MonoBehaviour
         // Przesuniêcie w stronê upadku
         Vector3 fallOffset = new Vector3(tiltDirection * fallMoveSpeed * Time.deltaTime, 0, 0);
         xrOrigin.localPosition += fallOffset;
-
+        CustomDynamicMoveProvider.onXRMovePositionChange?.Invoke();
         currentTiltAngle = targetTilt;
     }
 

@@ -1,9 +1,8 @@
 using System;
 using UnityEngine;
 
-public class Finish : MonoBehaviour
+public class Death : MonoBehaviour
 {
-    public static Action onFinishRoofTop;
     public static Action onDeath;
 
 
@@ -11,7 +10,7 @@ public class Finish : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            onFinishRoofTop.Invoke();
+            onDeath.Invoke();
         }
     }
 }

@@ -15,6 +15,7 @@ public class RooftopGameMa : MonoBehaviour
         infoPanel.ShowPanel(startMssg);
         StartCollectingInfo();
         Finish.onFinishRoofTop += UpdatePanel;
+        Death.onDeath += Reset;
     }
 
     private void Reset()
