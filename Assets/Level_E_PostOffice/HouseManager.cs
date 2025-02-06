@@ -95,7 +95,7 @@ public class HouseManager : MonoBehaviour
             gameWinState = true;
             UpdatePanel();
             Debug.Log("All packages delivered");
-            movementStats.StopMeasuring();
+            movementStats.StopMeasuring(true);
         }
         else PackageSpawn();
     }
@@ -115,7 +115,7 @@ public class HouseManager : MonoBehaviour
     private void OnDestroy()
     {
         if (packagesCounter != packagesToWin)
-            movementStats.StopMeasuring();
+            movementStats.StopMeasuring(false);
     }
 
     void UpdatePanel()

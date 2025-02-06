@@ -1,8 +1,9 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class RooftopGameMa : MonoBehaviour
+public class RooftopGameManager : MonoBehaviour
 {
     [SerializeField] VRClickablePanel infoPanel;
     public MovementStats movementStats;
@@ -15,12 +16,18 @@ public class RooftopGameMa : MonoBehaviour
         infoPanel.ShowPanel(startMssg);
         StartCollectingInfo();
         Finish.onFinishRoofTop += UpdatePanel;
-        Death.onDeath += Reset;
+        Death.onDeath += FallReset;
+    }
+
+    private void FallReset()
+    {
+        movementStats.StopMeasuring(false);
+        Reset();
     }
 
     private void Reset()
     {
-        movementStats.StopMeasuring();
+        
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
@@ -32,6 +39,7 @@ public class RooftopGameMa : MonoBehaviour
     void UpdatePanel()
     {
         string mssg = winMssg;
+        movementStats.StopMeasuring(true);
         infoPanel.ShowPanel(winMssg, Reset);
     }
 }
