@@ -55,11 +55,6 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    public void ForcePositionUpdate()
-    {
-        controller.SimpleMove(Vector3.forward * 0.6f);
-    }
-
     public void RestartPosition()
     {
         if (VRMode)
