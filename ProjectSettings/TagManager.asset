@@ -8,6 +8,7 @@ TagManager:
   - Rock
   - Water
   - Shield
+  - Plank
   layers:
   - Default
   - TransparentFX

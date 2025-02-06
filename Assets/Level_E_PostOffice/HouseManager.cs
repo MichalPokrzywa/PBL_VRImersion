@@ -19,7 +19,6 @@ public class HouseManager : MonoBehaviour
     public MovementStats movementStats;
     public int packagesToWin = 3;
     private int packagesCounter = 0;
-    public GameObject spawn;
     public GameObject player;
     private bool gameWinState = false;
     private string winMssg = "Brawo dostarczy³eœ wszystkie paczki. DOBRA ROBOTA!";

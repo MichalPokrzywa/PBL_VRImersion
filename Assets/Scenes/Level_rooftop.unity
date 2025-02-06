@@ -170,7 +170,7 @@ GameObject:
   m_Component:
   - component: {fileID: 226634782}
   m_Layer: 0
-  m_Name: ---Env---
+  m_Name: ---Environment---
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -398,6 +398,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1545911676176679000, guid: e60baa3602aa94547981ebe0de29d420,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1590854059218766585, guid: e60baa3602aa94547981ebe0de29d420,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3138429002840286003, guid: e60baa3602aa94547981ebe0de29d420,
         type: 3}
       propertyPath: m_Name
@@ -453,6 +463,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5903374950110386860, guid: e60baa3602aa94547981ebe0de29d420,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -467,12 +482,6 @@ GameObject:
 --- !u!1 &402245062 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7223199704171531999, guid: e60baa3602aa94547981ebe0de29d420,
-    type: 3}
-  m_PrefabInstance: {fileID: 402245060}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &402245063 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8352650423588015009, guid: e60baa3602aa94547981ebe0de29d420,
     type: 3}
   m_PrefabInstance: {fileID: 402245060}
   m_PrefabAsset: {fileID: 0}
@@ -1730,7 +1739,7 @@ PrefabInstance:
         type: 3}
       propertyPath: target
       value: 
-      objectReference: {fileID: 402245063}
+      objectReference: {fileID: 402245067}
     - target: {fileID: 8014483404104367846, guid: 6af93e62b7d0bd0488d697028b1024af,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -1896,10 +1905,9 @@ MonoBehaviour:
   rightController: {fileID: 402245065}
   xrOrigin: {fileID: 402245064}
   balanceThreshold: 0.5
-  swayMultiplier: 0.1
-  instabilityNoise: 0.02
+  swayMultiplier: 0.15
   fallRotationSpeed: 5
-  maxTiltAngle: 45
+  maxTiltAngle: 15
   fallMoveSpeed: 0.05
 --- !u!4 &1689443701
 Transform:

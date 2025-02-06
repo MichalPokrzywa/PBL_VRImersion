@@ -9,8 +9,7 @@ public class BalanceManager : MonoBehaviour
 
     [Header("Balansowanie")]
     public float balanceThreshold = 0.5f; // Próg utraty równowagi
-    public float swayMultiplier = 0.1f; // Jak bardzo przechyla
-    public float instabilityNoise = 0.02f; // Mikrodrgania
+    public float swayMultiplier = 0.15f; // Jak bardzo przechyla
 
     [Header("Rotacja przy upadku")]
     public float fallRotationSpeed = 5f; // Jak szybko gracz siê przewraca
@@ -20,6 +19,7 @@ public class BalanceManager : MonoBehaviour
     private Vector3 initialPosition; // Pozycja startowa XR Origin
     private Quaternion initialRotation; // Rotacja startowa XR Origin
     private float currentTiltAngle = 0f; // Aktualny przechy³
+    //private bool isOnPlank;
 
     void Start()
     {
@@ -44,15 +44,6 @@ public class BalanceManager : MonoBehaviour
         // Oblicz przesuniêcie na podstawie balansu
         Vector3 swayOffset = new Vector3(balanceVector.x * swayMultiplier, 0, balanceVector.z * swayMultiplier);
 
-        // Dodaj losowe mikrodrgania
-        Vector3 noise = new Vector3(
-            Mathf.PerlinNoise(Time.time, 0) - 0.5f,
-            0,
-            Mathf.PerlinNoise(0, Time.time) - 0.5f
-        ) * instabilityNoise;
-
-        // Przesuñ XR Origin (lekkie bujanie)
-        // xrOrigin.localPosition += swayOffset + noise;
 
         // SprawdŸ, czy gracz traci równowagê
         if (balanceVector.magnitude > balanceThreshold)
@@ -72,24 +63,38 @@ public class BalanceManager : MonoBehaviour
         // Kierunek przechy³u na podstawie pozycji g³owy wzglêdem œrodka kontrolerów
         float tiltDirection = balanceVector.x > 0 ? 1f : -1f; // 1 = przechy³ w prawo, -1 = przechy³ w lewo
 
-        // Oblicz docelowy k¹t przechy³u (tylko na osi Z)
-        float targetTilt = Mathf.Min(currentTiltAngle + fallRotationSpeed * Time.deltaTime, maxTiltAngle);
+        // Oblicz, o ile stopni zwiêkszamy przechy³ w tej klatce
+        float tiltStep = fallRotationSpeed * Time.deltaTime;
 
-        // Ustaw rotacjê tylko na osi Z (przechylanie na boki)
-        Quaternion targetRotation = Quaternion.Euler(0, 0, -tiltDirection * targetTilt);
-        xrOrigin.localRotation = Quaternion.Slerp(xrOrigin.localRotation, targetRotation, Time.deltaTime);
+        // Ogranicz k¹t przechy³u do maxTiltAngle
+        currentTiltAngle = Mathf.Clamp(currentTiltAngle + tiltStep, 0, maxTiltAngle);
+
+        // Tworzymy rotacjê tylko wokó³ osi Z (przechylenie)
+        Quaternion tiltRotation = Quaternion.Euler(0, 0, -tiltDirection * tiltStep);
+
+        if(maxTiltAngle * Mathf.Deg2Rad <= Mathf.Abs(xrOrigin.localRotation.z) && tiltDirection * xrOrigin.localRotation.z > 0)
+           tiltRotation = Quaternion.Euler(0, 0, 0);
+        // Mno¿ymy now¹ rotacjê przez aktualn¹, aby dodaæ przechy³ zamiast go nadpisywaæ
+        xrOrigin.localRotation = tiltRotation * xrOrigin.localRotation;
 
         // Przesuniêcie w stronê upadku
         Vector3 fallOffset = new Vector3(tiltDirection * fallMoveSpeed * Time.deltaTime, 0, 0);
         xrOrigin.localPosition += fallOffset;
+
         CustomDynamicMoveProvider.onXRMovePositionChange?.Invoke();
-        currentTiltAngle = targetTilt;
     }
 
     void ResetBalance()
     {
-        // Stopniowy powrót do normalnej pozycji
-        xrOrigin.localRotation = Quaternion.Slerp(xrOrigin.localRotation, initialRotation, Time.deltaTime);
-        currentTiltAngle = Mathf.Max(currentTiltAngle - fallRotationSpeed * Time.deltaTime, 0);
+        if(xrOrigin.localRotation.z ==0) return;
+
+        float tiltStep = fallRotationSpeed * Time.deltaTime;
+        currentTiltAngle = Mathf.Max(currentTiltAngle - tiltStep, 0);
+        
+        Quaternion correctionRotation = Quaternion.Euler(0, 0, (currentTiltAngle > 0 ? 1 : -1) * tiltStep);
+        
+        xrOrigin.localRotation = Quaternion.Slerp(xrOrigin.localRotation, correctionRotation * xrOrigin.localRotation, Time.deltaTime * 5f);
+
     }
+
 }
