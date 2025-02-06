@@ -26335,7 +26335,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   checkpointsTouched: 0
-  requiredTouches: 1
+  requiredTouches: 2
   infoPanel: {fileID: 9115987485745870099}
   timer: {fileID: 3827976942462639672}
   bridgesParent: {fileID: 1136494075}

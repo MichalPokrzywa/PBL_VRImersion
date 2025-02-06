@@ -160,7 +160,7 @@ public class GameLogic : MonoBehaviour
         sb.Append(katVR ? "KatVR_" : "VR_");
         string dateTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
         sb.Append(dateTime);
-        string filePath = $"Assets/{sb}.json";
+        string filePath = $"Assets/Stats/{sb}.json";
 
         stats.StartMeasuring(filePath);
     }
