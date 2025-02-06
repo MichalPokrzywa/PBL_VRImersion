@@ -25,7 +25,7 @@ public class DisappearingBeam : MonoBehaviour
 
     const string PLAYER_TAG = "Player";
 
-    void Start()
+    void Awake()
     {
         triggerCollider = GetComponent<Collider>();
         collisionCollider = GetComponentsInChildren<Collider>().Where(go => go.gameObject != this.gameObject).First();

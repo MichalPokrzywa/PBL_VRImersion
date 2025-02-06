@@ -1,12 +1,13 @@
-using System.Collections;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class PlayerCollision : MonoBehaviour
+public class PlayerBehaviour : MonoBehaviour
 {
     [SerializeField] Vector3 startPosition;
-    [SerializeField] GameObject parentXR;
+    [SerializeField] XROrigin xrOrigin;
     [SerializeField] CharacterController controller;
+    [SerializeField] AudioSource audioSource;
 
     public UnityAction<int> onCollisionWithCheckpoint;
     public UnityAction onCollisionWithWater;
@@ -16,6 +17,7 @@ public class PlayerCollision : MonoBehaviour
 
     const string WATER_TAG = "Water";
     const string CHECKPOINT_TAG = "Rock";
+    const float timeToRestart = 1.5f;
 
     void Start()
     {
@@ -27,8 +29,8 @@ public class PlayerCollision : MonoBehaviour
     {
         if (rb != null && VRMode)
         {
-            Vector3 newPosition = parentXR.transform.position;
-            Quaternion newRotation = parentXR.transform.rotation;
+            Vector3 newPosition = xrOrigin.transform.position;
+            Quaternion newRotation = xrOrigin.transform.rotation;
             rb.Move(newPosition, newRotation);
         }
     }
@@ -45,24 +47,23 @@ public class PlayerCollision : MonoBehaviour
                 checkpointScript.DeactivateObject();
             }
         }
-
         else if (collision.collider.CompareTag(WATER_TAG))
         {
+            audioSource.Play();
             onCollisionWithWater?.Invoke();
-            RestartPosition();
+            Invoke(nameof(RestartPosition), timeToRestart);
         }
     }
 
     public void ForcePositionUpdate()
     {
-        controller.SimpleMove(Vector3.down * 0.6f);
+        controller.SimpleMove(Vector3.forward * 0.6f);
     }
-
 
     public void RestartPosition()
     {
         if (VRMode)
-            parentXR.transform.position = startPosition;
+            xrOrigin.transform.position = startPosition;
         else
             transform.position = startPosition;
     }

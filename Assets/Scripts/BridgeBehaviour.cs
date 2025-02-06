@@ -21,7 +21,8 @@ public class BridgeBehaviour : MonoBehaviour
                 return;
             }
             isPlayerOnBridge = value;
-            UpdateBridgeState(isPlayerOnBridge);
+            if (value && !audioSource.isPlaying)
+                audioSource.Play();
         }
     }
 
@@ -43,22 +44,6 @@ public class BridgeBehaviour : MonoBehaviour
         {
             beam?.EnableBeam();
         }
-    }
-
-    void UpdateBridgeState(bool isPlayerOnBridge)
-    {
-        if (!isPlayerOnBridge)
-        {
-            // reset state - balance the bridge
-            return;
-        }
-
-        if (!audioSource.isPlaying)
-            audioSource.Play();
-
-        // calculate the angle of inclination of the bridge
-        Vector3 leftHandPos = GameLogic.LeftController.transform.position;
-        Vector3 rightHandPos = GameLogic.RightController.transform.position;
     }
 
     void PlayerStandingOnDisabledBeam()
