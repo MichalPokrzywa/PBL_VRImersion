@@ -9,7 +9,7 @@ public class BridgeBehaviour : MonoBehaviour
     AudioSource audioSource;
     bool isPlayerOnBridge = false;
 
-    public Action forcePlayerPosUpdate;
+    public Action OnStandingBeamDisappear;
 
     public bool IsPlayerOnBridge
     {
@@ -34,7 +34,18 @@ public class BridgeBehaviour : MonoBehaviour
         foreach (var beam in GetComponentsInChildren<DisappearingBeam>())
         {
             disappearingBeams.Add(beam);
-            beam.playerStandingOnDisabledBeam += PlayerStandingOnDisabledBeam;
+            beam.OnStandingBeamDisappear += PlayerStandingOnDisabledBeam;
+        }
+    }
+
+    void OnDestroy()
+    {
+        foreach (var beam in disappearingBeams)
+        {
+            if (beam != null)
+            {
+                beam.OnStandingBeamDisappear -= PlayerStandingOnDisabledBeam;
+            }
         }
     }
 
@@ -48,7 +59,7 @@ public class BridgeBehaviour : MonoBehaviour
 
     void PlayerStandingOnDisabledBeam()
     {
-        forcePlayerPosUpdate?.Invoke();
+        OnStandingBeamDisappear?.Invoke();
     }
 
 }

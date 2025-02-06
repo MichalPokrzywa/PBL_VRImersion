@@ -53,7 +53,7 @@ public class GameLogic : MonoBehaviour
         {
             foreach (var bridge in bridges)
             {
-                bridge.forcePlayerPosUpdate += ForcePlayerPosUpdate;
+                bridge.OnStandingBeamDisappear += ForcePlayerCollisionUpdate;
             }
         }
 
@@ -83,7 +83,7 @@ public class GameLogic : MonoBehaviour
         foreach (var bridge in bridges)
         {
             if (bridge != null)
-                bridge.forcePlayerPosUpdate -= ForcePlayerPosUpdate;
+                bridge.OnStandingBeamDisappear -= ForcePlayerCollisionUpdate;
         }
     }
 
@@ -177,8 +177,8 @@ public class GameLogic : MonoBehaviour
         input.enabled = !VRMode;
     }
 
-    void ForcePlayerPosUpdate()
+    void ForcePlayerCollisionUpdate()
     {
-       playerVR.ForcePositionUpdate();
+        CustomDynamicMoveProvider.onXRMovePositionChange?.Invoke();
     }
 }

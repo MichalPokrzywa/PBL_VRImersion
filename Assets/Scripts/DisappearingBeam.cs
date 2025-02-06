@@ -12,7 +12,7 @@ public class DisappearingBeam : MonoBehaviour
     [SerializeField] Collider triggerCollider;
 
     public Rigidbody beamRb => rb;
-    public Action playerStandingOnDisabledBeam;
+    public Action OnStandingBeamDisappear;
 
     bool isPlayerOnBeam = false;
 
@@ -79,7 +79,7 @@ public class DisappearingBeam : MonoBehaviour
 
         if (isPlayerOnBeam)
         {
-            playerStandingOnDisabledBeam?.Invoke();
+            OnStandingBeamDisappear?.Invoke();
         }
     }
 
