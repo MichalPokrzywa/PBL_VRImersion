@@ -156,7 +156,7 @@ public class GameLogic : MonoBehaviour
         gameActive = true;
 
         StringBuilder sb = new StringBuilder();
-        sb.Append("LevelD_");
+        sb.Append("Level_D_");
         sb.Append(katVR ? "KatVR_" : "VR_");
         string dateTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
         sb.Append(dateTime);
