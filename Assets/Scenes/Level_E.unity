@@ -663,12 +663,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   infoPanel: {fileID: 532365812}
   HouseList: []
-  seed: 2137
+  seed: 123
   PackagePrefab: {fileID: 1465431513777077001, guid: c71629c2af965894085a506337c2eea7,
     type: 3}
   PackegeSpawnPoint: {fileID: 157291492134632156}
   movementStats: {fileID: 1419505385}
-  packagesToWin: 3
+  packagesToWin: 2
   player: {fileID: 7868150245374314658}
 --- !u!1 &1804173448
 GameObject:
