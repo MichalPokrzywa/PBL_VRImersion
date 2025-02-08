@@ -5,6 +5,7 @@ using UnityEditor.SearchService;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.Analytics;
 
 
 
@@ -21,6 +22,7 @@ public class HouseManager : MonoBehaviour
     private int packagesCounter = 0;
     public GameObject player;
     private bool gameWinState = false;
+    private bool gameStarted = false;
     private string winMssg = "Brawo dostarczy³eœ wszystkie paczki. DOBRA ROBOTA!";
     private string startMssg = "Dostarcz wszystkie przesy³ki do odpowiednich domów. Powodzenia!";
 
@@ -82,8 +84,8 @@ public class HouseManager : MonoBehaviour
 
     private void StartGame()
     {
-       
-        packagesCounter = 0;
+        gameStarted = true;
+         packagesCounter = 0;
         foreach (HouseStreet house in HouseList)
         {
             house.SetMailbox(false);
@@ -105,9 +107,9 @@ public class HouseManager : MonoBehaviour
         if (packagesCounter == packagesToWin)
         {
             gameWinState = true;
+            movementStats.StopMeasuring(true);
             UpdatePanel();
             Debug.Log("All packages delivered");
-            movementStats.StopMeasuring(true);
         }
         else PackageSpawn();
     }
@@ -126,7 +128,7 @@ public class HouseManager : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (packagesCounter != packagesToWin)
+        if (packagesCounter != packagesToWin && gameStarted)
             movementStats.StopMeasuring(false);
         HouseStreet.onPackageDelivered -= PackageDeliverd;
     }
