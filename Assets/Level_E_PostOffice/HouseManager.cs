@@ -44,6 +44,13 @@ public class HouseManager : MonoBehaviour
         return randomIndex;
     }
 
+    void SortHouseList()
+    {
+        HouseList = HouseList
+            .OrderBy(h => h.HouseNumber)
+            .ThenBy(h => h.StreetColor.ToString()) // Sorting colors as strings
+            .ToList();
+    }
     // Metoda zwracaj¹ca losowy dom z listy
     public HouseStreet RandomizeHouse()
     {
@@ -62,14 +69,20 @@ public class HouseManager : MonoBehaviour
     {
         HouseStreet.onPackageDelivered += PackageDeliverd;
         HouseList = FindObjectsByType<HouseStreet>(FindObjectsSortMode.InstanceID).ToList();
+        UnityEngine.Random.InitState(seed);
+        SortHouseList();
         SetUp();
     }
 
     private void SetUp()
     {
         gameWinState = false;
-        infoPanel.ShowPanel(startMssg);
-        UnityEngine.Random.InitState(seed);
+        infoPanel.ShowPanel(startMssg, StartGame);
+    }
+
+    private void StartGame()
+    {
+       
         packagesCounter = 0;
         foreach (HouseStreet house in HouseList)
         {
@@ -83,7 +96,7 @@ public class HouseManager : MonoBehaviour
 
     private void Reset()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 
     private void PackageDeliverd()
@@ -115,6 +128,7 @@ public class HouseManager : MonoBehaviour
     {
         if (packagesCounter != packagesToWin)
             movementStats.StopMeasuring(false);
+        HouseStreet.onPackageDelivered -= PackageDeliverd;
     }
 
     void UpdatePanel()
