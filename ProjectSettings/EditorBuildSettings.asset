@@ -6,14 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/HeartRateVRDebugExample.unity
+    guid: d26aab8d6cd31ec43b6b6af6980c662d
+  - enabled: 1
     path: Assets/Scenes/Level_D.unity
     guid: fd3e7fa80a357e54e9dbf38deef7d3e8
   - enabled: 1
-    path: Assets/Scenes/Menu.unity
-    guid: 2dc1019451e60b44c96ea257dcf09c01
+    path: Assets/Scenes/Level_E.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/Menu2.unity
-    guid: 3797db8b692eb0c4b83e703eae6085b4
+    path: Assets/Scenes/Level_rooftop.unity
+    guid: 6545f85e3ed7baf4798b1fb9f3aa5e60
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 518ce649f62132f498b670aea3228ce3,
       type: 2}

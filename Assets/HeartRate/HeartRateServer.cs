@@ -29,7 +29,7 @@ public class HeartRateServer : MonoBehaviour
     public string localIP { get; private set; } = "192.168.0.0";
     
     private object _lock = new object();
-    private static HeartRateServer instance;
+    public static HeartRateServer instance;
 
     [SerializeField]
     public int port { get; private set; } = 6547;
