@@ -15,6 +15,7 @@ public class MovementStats : MonoBehaviour
 
     bool isMeasuring = false;
     string fileName = "Assets/movement_stats.json";
+    bool completed = false;
 
     // 1. Basic movement measurements
     float startTime;
@@ -77,6 +78,7 @@ public class MovementStats : MonoBehaviour
     struct FileData
     {
         public string date;
+        public bool completed;
         public float timeDuration;
         public Vector3 maxVelocity;
         public Vector3 avgVelocity;
@@ -111,8 +113,9 @@ public class MovementStats : MonoBehaviour
     }
 
     // Call it when user finished game
-    public void StopMeasuring()
+    public void StopMeasuring(bool completed)
     {
+        this.completed = completed;
         endTime = Time.time;
         isMeasuring = false;
         SerializeData();
@@ -310,6 +313,7 @@ public class MovementStats : MonoBehaviour
         var fileData = new FileData
         {
             date = DateTime.Now.ToString(),
+            completed = completed,
             timeDuration = endTime - startTime,
             maxVelocity = maxVelocity,
             avgVelocity = avgVelocity,
