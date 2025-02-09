@@ -29,6 +29,7 @@ public class HeartRateServer : MonoBehaviour
     public string localIP { get; private set; } = "192.168.0.0";
     
     private object _lock = new object();
+    public static HeartRateServer instance;
 
     [SerializeField]
     public int port { get; private set; } = 6547;
@@ -53,11 +54,24 @@ public class HeartRateServer : MonoBehaviour
     }
 
     [SerializeField]
-    bool writeToFileInsteadOfMemoryStore = true;
+    bool writeToFileInsteadOfMemoryStore = false;
 
     void OnDestroy()
     {
         StopServer();
+    }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
