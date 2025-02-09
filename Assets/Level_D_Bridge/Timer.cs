@@ -10,6 +10,7 @@ public class Timer : MonoBehaviour
 
     float timer;
     public string TimerValue => FormatTime(timer);
+    public string TimePassed => FormatTime(targetTime - timer);
 
     public Action OnTimerEnd;
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.XR.Interaction.Toolkit.UI;
 
 public class GameLogic : MonoBehaviour
@@ -57,7 +58,6 @@ public class GameLogic : MonoBehaviour
             }
         }
 
-        // Use playerCollider component based on VR or standalone mode
         player = VRMode ? playerVR : playerKeyboard;
         player.VRMode = VRMode;
 
@@ -66,7 +66,7 @@ public class GameLogic : MonoBehaviour
         timer.OnTimerEnd += OnGameLost;
 
         UpdateComponentsState();
-        RestartGame();
+        ClearState();
     }
 
     void OnDestroy()
@@ -112,7 +112,7 @@ public class GameLogic : MonoBehaviour
         gameWinState = true;
         timer.StopTimer();
         stats.StopMeasuring(true);
-        string mssg = winMssg + $" Twój czas: {timer.TimerValue}";
+        string mssg = winMssg + $" Twój czas: {timer.TimePassed}";
         infoPanel.ShowPanel(mssg, RestartGame);
     }
 
@@ -138,6 +138,11 @@ public class GameLogic : MonoBehaviour
     }
 
     void RestartGame()
+    {
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
+    }
+
+    void ClearState()
     {
         ResetAllBridges();
         blockade.BlockMovement();
