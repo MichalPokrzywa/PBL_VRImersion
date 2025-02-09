@@ -14,10 +14,10 @@
 3. Accessing Data - Data is available via the public member HrReadings. Note that each time the data is accessed, the container is cleared.
 4. Using with Smartwatch - Ensure that both the devices are on the same Wi-Fi network. The Wi-Fi network should have the option enabled to detect devices within the same network.
 5. Install Smartwatch App - The smartwatch must have a dedicated app installed, which can be found in the assets folder.
-6. Configure Smartwatch App - In the smartwatch app, enable all pervimsions that app asks for, enter the IP and PORT. These values can be found in the Debug Log in the Console after starting the Unity project. Configure how often measurements are to be sent (1s, 2s, 5s, 10s, 30s, 60s)
-7. Start/Stop HR Measurement - Press the "Start" button to start the smartwatch HR measurement. Once started, app will try to send data to the server, you can run and stop Unity project as many times as you want, Wear OS app should still work continously. Press the "Stop" button to stop the measurement.
-8. Warnigs - on smartwach app dialog with warnigs may appear - act reasonable according to commutinates, dialog can be closed or vanishes after 3 seconds, dialog does not stop the app.
+6. Configure Smartwatch App - In the smartwatch app, enable all permissions that app asks for, enter the IP and PORT. These values can be found in the Debug Log in the Console after starting the Unity project. Configure how often measurements are to be sent (1s, 2s, 5s, 10s, 30s, 60s)
+7. Start/Stop HR Measurement - Press the "Start" button to start the smartwatch HR measurement. Once started, app will try to send data to the server, you can run and stop Unity project as many times as you want, Wear OS app should still work continuously. Press the "Stop" button to stop the measurement.
+8. Warnings - on smartwatch app dialog with warning may appear - act reasonable according to communicates, dialog can be closed or vanishes after 3 seconds, dialog does not stop the app.
 
 When server is started, you can test its functionality by (having a watch duh..) or writing in cmd:
-curl -X POST -d "bpm=666" http://<YOUR LOCAL IP>:<PORT>/
+curl -X POST -d "{heartRate:666}" http://<YOUR LOCAL IP>:<PORT>/
 Results will be written to a file (line by line in csv fashion) located in Assets/<YOUR PATH AND FILE NAME>
