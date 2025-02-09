@@ -1,8 +1,10 @@
 import json
 import os
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from tqdm import tqdm
 
 # Ustawienia wykresów
 sns.set(style="whitegrid")
@@ -110,126 +112,142 @@ def display_basic_stats(df):
     print("\nLiczba sesji wg. doświadczenia:")
     print(df.groupby("Experience").size())
 
-def plot_comparisons(df):
-    """Tworzy wykresy porównujące statystyki wg. VR choroby i doświadczenia."""
-    
-    # 1. Zestawienie czasu przejścia poziomów: osoby chory vs. zdrowy
-    plt.figure()
-    sns.barplot(data=df, x="Sickness", y="Session Duration (s)", hue="Level", ci="sd")
-    plt.title("Średni czas trwania sesji wg. stanu VR (chory/zdrowy) oraz poziomu")
-    plt.tight_layout()
-    plt.show()
-    
-    # 2. Porównanie czasów: osoby doświadczone vs. niedoświadczone
-    plt.figure()
-    sns.barplot(data=df, x="Experience", y="Session Duration (s)", hue="Level", ci="sd")
-    plt.title("Średni czas trwania sesji wg. doświadczenia w VR oraz poziomu")
-    plt.tight_layout()
-    plt.show()
-    
-    # Wybieramy kolumny numeryczne, w tym kolumnę binarną Sickness (0 = zdrowy, 1 = chory)
-    numeric_cols = [
-        "Session Duration (s)",
-        "Total Head Rotation (degrees)",
-        "Total Body Rotation (degrees)",
-        "Avg Head Rotation Speed (degrees/s)",
-        "Avg Body Rotation Speed (degrees/s)",
-        "Sickness_bin"
-    ]
-
-    # Usuwamy ewentualne NaN-y
-    df_numeric = df[numeric_cols].dropna()
-
-    # Filtrujemy dane na osoby zdrowe i chore
-    healthy_df = df_numeric[df_numeric["Sickness_bin"] == 0]
-    sick_df    = df_numeric[df_numeric["Sickness_bin"] == 1]
-
-    # Liczymy macierz korelacji dla każdej grupy
-    healthy_corr = healthy_df.corr()
-    sick_corr    = sick_df.corr()
-
-    # Tworzymy dwie podmacierze w jednej figurze
-    fig, (ax1, ax2) = plt.subplots(nrows=2, figsize=(10, 12))
-
-    sns.heatmap(healthy_corr, annot=True, cmap="coolwarm", ax=ax1)
-    ax1.set_title("Macierz korelacji dla osób zdrowych")
-
-    sns.heatmap(sick_corr, annot=True, cmap="coolwarm", ax=ax2)
-    ax2.set_title("Macierz korelacji dla osób chorych")
-
-    plt.tight_layout()
-    plt.show()
-
-
-    # Opcjonalnie: scatter plot pokazujący zależność czasu sesji od rotacji głowy,
-    # z rozróżnieniem stanu choroby
-    plt.figure()
-    sns.scatterplot(data=df, x="Session Duration (s)", y="Total Head Rotation (degrees)",
-                    hue="Sickness", style="Level", s=100)
-    plt.title("Total Head Rotation vs. Session Duration - podział wg. VR choroby")
-    plt.tight_layout()
-    plt.show()
-      # Wykres 1: Średni czas trwania sesji według osób i poziomów
-    plt.figure()
-    sns.barplot(data=df, x="Person", y="Session Duration (s)", hue="Level", ci=None)
-    plt.title("Średni czas trwania sesji według osób i poziomów")
-    plt.tight_layout()
-    plt.show()
-
-    # Wykres 2: Scatter plot - Całkowita rotacja głowy vs. czas sesji, kolor: osoba, kształt: poziom
-    plt.figure()
-    sns.scatterplot(data=df, x="Session Duration (s)", y="Total Head Rotation (degrees)",
-                    hue="Person", style="Level", s=100)
-    plt.title("Total Head Rotation vs Session Duration")
-    plt.tight_layout()
-    plt.show()
-
-    # Wykres 3: Boxplot - Średnia prędkość rotacji głowy dla poszczególnych osób i poziomów
-    plt.figure()
-    sns.boxplot(data=df, x="Person", y="Avg Head Rotation Speed (degrees/s)", hue="Level")
-    plt.title("Average Head Rotation Speed by Person and Level")
-    plt.tight_layout()
-    plt.show()
-
-     # 4. Porównanie Dangerous Place Resumes, Number of Pauses oraz Total Pause Duration między zdrowymi a chorymi
-    # Możesz wybrać osobne wykresy lub umieścić je w jednym oknie z wieloma subplotami.
-    
-    # Opcja A: osobne wykresy
-    plt.figure()
-    sns.boxplot(data=df, x="Sickness", y="Dangerous Place Resumes")
-    plt.title("Porównanie Dangerous Place Resumes: zdrowi vs. chorzy")
-    plt.tight_layout()
-    plt.show()
-
-    plt.figure()
-    sns.boxplot(data=df, x="Sickness", y="Number of Pauses")
-    plt.title("Porównanie Number of Pauses: zdrowi vs. chorzy")
-    plt.tight_layout()
-    plt.show()
-
-    plt.figure()
-    sns.boxplot(data=df, x="Sickness", y="Total Pause Duration (s)")
-    plt.title("Porównanie Total Pause Duration (s): zdrowi vs. chorzy")
-    plt.tight_layout()
-    plt.show()
-    
-    # Opcja B: wykresy w jednym oknie (subplots)
-    # Jeśli wolisz mieć wszystkie trzy porównania w jednym oknie, odkomentuj poniższy blok:
+def plot_comparisons_interactive(df):
     """
-    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
-    sns.boxplot(data=df, x="Sickness", y="Dangerous Place Resumes", ax=axes[0])
-    axes[0].set_title("Dangerous Place Resumes")
-    
-    sns.boxplot(data=df, x="Sickness", y="Number of Pauses", ax=axes[1])
-    axes[1].set_title("Number of Pauses")
-    
-    sns.boxplot(data=df, x="Sickness", y="Total Pause Duration (s)", ax=axes[2])
-    axes[2].set_title("Total Pause Duration (s)")
-    
-    fig.suptitle("Porównanie parametrów pauz: zdrowi vs. chorzy", fontsize=16)
-    plt.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.show()
+    Interaktywna karuzela wykresów – klawisze ← i → przełączają kolejne wykresy.
+    Dodano porównania według VR choroby, doświadczenia oraz ukończenia poziomów.
     """
+
+    # Dodajemy kolumnę z informacją o ukończeniu poziomu
+    # (przyjmujemy, że kolumna "Completed" zawiera wartość True/False)
+    df["LevelStatus"] = df["Completed"].apply(lambda x: "ukończony" if x else "nieukończony")
+
+    # Definiujemy kilka funkcji, z których każda rysuje inny wykres.
+    # Każda funkcja zaczyna się od wyczyszczenia aktualnej figury (plt.clf()).
+    
+    def plot_session_by_sickness():
+        plt.clf()
+        sns.barplot(data=df, x="Sickness", y="Session Duration (s)", hue="Level", errorbar="sd")
+        plt.title("Czas sesji wg. VR choroby i poziomu")
+        plt.legend(loc='best')
+
+    def plot_session_by_experience():
+        plt.clf()
+        sns.barplot(data=df, x="Experience", y="Session Duration (s)", hue="Level", errorbar="sd")
+        plt.title("Czas sesji wg. doświadczenia w VR i poziomu")
+        plt.legend(loc='best')
+
+    def plot_completed_status():
+        plt.clf()
+        sns.barplot(data=df, x="LevelStatus", y="Session Duration (s)", hue="Level", errorbar="sd")
+        plt.title("Czas sesji wg. ukończenia poziomu")
+        plt.legend(loc='best')
+
+    def plot_correlation():
+        plt.clf()  # czyścimy główną figurę
+        # Ustawiamy subplots w głównej figurze (1 wiersz, 2 kolumny)
+        ax1 = plt.subplot(1, 2, 1)
+        ax2 = plt.subplot(1, 2, 2)
+        
+        numeric_cols = [
+            "Session Duration (s)",
+            "Total Head Rotation (degrees)",
+            "Total Body Rotation (degrees)",
+            "Avg Head Rotation Speed (degrees/s)",
+            "Avg Body Rotation Speed (degrees/s)",
+            "Sickness_bin"
+        ]
+        df_numeric = df[numeric_cols].dropna()
+        healthy_df = df_numeric[df_numeric["Sickness_bin"] == 0]
+        sick_df    = df_numeric[df_numeric["Sickness_bin"] == 1]
+        
+        sns.heatmap(healthy_df.corr(), annot=True, cmap="coolwarm", ax=ax1)
+        ax1.set_title("Korelacja - zdrowi")
+        sns.heatmap(sick_df.corr(), annot=True, cmap="coolwarm", ax=ax2)
+        ax2.set_title("Korelacja - chorzy")
+        
+        plt.suptitle("Macierze korelacji")
+        plt.draw()
+
+
+    def plot_scatter():
+        plt.clf()
+        sns.scatterplot(data=df, x="Session Duration (s)", y="Total Head Rotation (degrees)",
+                        hue="Sickness", style="Level", s=100)
+        plt.title("Rotacja głowy vs czas sesji")
+        plt.legend(loc='best')
+
+    def plot_pause_comparison():
+        plt.clf()
+        # Tworzymy 3 subploty w głównej figurze (1 wiersz, 3 kolumny)
+        ax1 = plt.subplot(1, 3, 1)
+        ax2 = plt.subplot(1, 3, 2)
+        ax3 = plt.subplot(1, 3, 3)
+        
+        sns.boxplot(data=df, x="Sickness", y="Dangerous Place Resumes", ax=ax1)
+        ax1.set_title("Dangerous Place Resumes")
+        sns.boxplot(data=df, x="Sickness", y="Number of Pauses", ax=ax2)
+        ax2.set_title("Number of Pauses")
+        sns.boxplot(data=df, x="Sickness", y="Total Pause Duration (s)", ax=ax3)
+        ax3.set_title("Total Pause Duration (s)")
+        
+        plt.suptitle("Parametry pauz: zdrowi vs. chorzy")
+        plt.tight_layout(rect=[0, 0, 1, 0.95])
+        plt.draw()
+    
+    def plot_pause_comparison_experience():
+        plt.clf()
+        # Tworzymy 3 subploty w głównej figurze (1 wiersz, 3 kolumny)
+        ax1 = plt.subplot(1, 3, 1)
+        ax2 = plt.subplot(1, 3, 2)
+        ax3 = plt.subplot(1, 3, 3)
+        
+        sns.boxplot(data=df, x="Experience", y="Dangerous Place Resumes", ax=ax1)
+        ax1.set_title("Dangerous Place Resumes")
+        
+        sns.boxplot(data=df, x="Experience", y="Number of Pauses", ax=ax2)
+        ax2.set_title("Number of Pauses")
+        
+        sns.boxplot(data=df, x="Experience", y="Total Pause Duration (s)", ax=ax3)
+        ax3.set_title("Total Pause Duration (s)")
+        
+        plt.suptitle("Parametry pauz: doświadczony vs. nie doświadczony")
+        plt.tight_layout(rect=[0, 0, 1, 0.95])
+        plt.draw()
+
+    # Umieszczamy funkcje w liście – będą przełączane klawiszami strzałek
+    plot_funcs = [plot_session_by_sickness,
+                  plot_session_by_experience,
+                  plot_completed_status,
+                  plot_correlation,
+                  plot_scatter,
+                  plot_pause_comparison,
+                  plot_pause_comparison_experience]
+
+    # Używamy listy jednoelementowej do przechowania aktualnego indeksu (aby można było modyfikować zmienną z wnętrza funkcji)
+    current_plot = [0]
+
+    fig = plt.figure()
+    plt.subplots_adjust(top=0.88)  # zostaw miejsce na tytuł główny jeśli potrzebne
+
+    def on_key(event):
+        if event.key == 'right':
+            current_plot[0] = (current_plot[0] + 1) % len(plot_funcs)
+            plt.clf()
+            plot_funcs[current_plot[0]]()
+            plt.draw()
+        elif event.key == 'left':
+            current_plot[0] = (current_plot[0] - 1) % len(plot_funcs)
+            plt.clf()
+            plot_funcs[current_plot[0]]()
+            plt.draw()
+
+    fig.canvas.mpl_connect('key_press_event', on_key)
+
+    # Rysujemy pierwszy wykres
+    plot_funcs[current_plot[0]]()
+    plt.suptitle("Interaktywna karuzela wykresów (←/→ aby przełączać)")
+    plt.show()
 
 def display_stats(stats_data):
     """Wyświetla zebrane dane w przejrzystej formie."""
@@ -244,6 +262,171 @@ def display_stats(stats_data):
                 print()  # nowa linia między sesjami
         print("-" * 40)
 
+def load_samples(base_dir):
+    """
+    Przeszukuje folder base_dir (który zawiera podfoldery dla osób) i dla każdego pliku JSON
+    zaczynającego się od "Level_" wyciąga dane z klucza 'samples'.
+    Zwraca DataFrame z kolumnami:
+      Person, Level, File, time,
+      headRotationAngle, bodyRotationAngle, headRotationSpeed, bodyRotationSpeed,
+      velocity_x, velocity_y, velocity_z, velocity_magnitude.
+    Dodaje pasek postępu przy przetwarzaniu plików.
+    """
+    sample_rows = []
+    all_files = []
+
+    # Zbieramy wszystkie pliki spełniające kryteria
+    for person in os.listdir(base_dir):
+        person_path = os.path.join(base_dir, person)
+        if os.path.isdir(person_path):
+            for file_name in os.listdir(person_path):
+                if file_name.endswith('.json') and file_name.startswith("Level_"):
+                    all_files.append((person, file_name, os.path.join(person_path, file_name)))
+                    
+    # Przetwarzamy pliki z użyciem paska postępu
+    for person, file_name, file_path in tqdm(all_files, desc="Processing JSON files", unit="file"):
+        try:
+            data = load_data(file_path)
+        except Exception as e:
+            print(f"Error loading {file_path}: {e}")
+            continue
+        
+        samples = data.get("samples", [])
+        for sample in samples:
+            t = sample.get("time")
+            if t is None:
+                continue
+            # Dane o rotacji
+            rotation = sample.get("rotation", {})
+            headRotAngle = rotation.get("headRotationAngle")
+            bodyRotAngle = rotation.get("bodyRotationAngle")
+            headRotSpeed = rotation.get("headRotationSpeed")
+            bodyRotSpeed = rotation.get("bodyRotationSpeed")
+            
+            # Dane o prędkości – z pola "movement" -> "velocity"
+            movement = sample.get("movement", {})
+            velocity = movement.get("velocity", {})
+            vx = velocity.get("x")
+            vy = velocity.get("y")
+            vz = velocity.get("z")
+            if vx is not None and vy is not None and vz is not None:
+                vmag = (vx**2 + vy**2 + vz**2) ** 0.5
+            else:
+                vmag = None
+            
+            # Wyciągamy Level z nazwy pliku (np. z "Level_E_Seed123_06.02.2025_19_38_21.json" wyciągamy "E")
+            parts = file_name.split('_')
+            level = parts[1] if len(parts) >= 2 else "Unknown"
+            
+            sample_rows.append({
+                "Person": person,
+                "Level": level,
+                "File": file_name,
+                "time": t,
+                "headRotationAngle": headRotAngle,
+                "bodyRotationAngle": bodyRotAngle,
+                "headRotationSpeed": headRotSpeed,
+                "bodyRotationSpeed": bodyRotSpeed,
+                "velocity_x": vx,
+                "velocity_y": vy,
+                "velocity_z": vz,
+                "velocity_magnitude": vmag
+            })
+            
+    df_samples = pd.DataFrame(sample_rows)
+    return df_samples
+
+
+from tqdm import tqdm
+
+def plot_combined_interactive(df_samples):
+    """
+    Tworzy interaktywne wykresy z możliwością przewijania plików strzałkami.
+    Dla każdego pliku wyświetla trzy wykresy obok siebie:
+    - prędkość vs czas,
+    - rotacja głowy vs czas,
+    - rotacja ciała vs czas.
+    """
+    # Przygotowanie danych
+    df = df_samples.copy()
+    df["time_sec"] = df["time"].astype(int)
+    
+    # Lista unikalnych plików (sesji)
+    files = df["File"].unique()
+    if len(files) == 0:
+        print("Brak danych do wyświetlenia.")
+        return
+    
+    # Przechowujemy dane zgrupowane dla każdego pliku
+    file_data = {}
+    for file in files:
+        df_file = df[df["File"] == file]
+        grouped = df_file.groupby("time_sec").agg({
+            "headRotationAngle": "mean",
+            "bodyRotationAngle": "mean",
+            "velocity_magnitude": "mean"
+        }).reset_index()
+        file_data[file] = grouped
+    
+    # Inicjalizacja interfejsu
+    current_file_idx = [0]  # przechowuje aktualny indeks (użyte jako lista, by można modyfikować)
+    fig = plt.figure(figsize=(18, 5))
+    plt.subplots_adjust(top=0.85, wspace=0.3)
+    
+    def update_plot(idx):
+        """Rysuje wykresy dla pliku o podanym indeksie."""
+        plt.clf()  # wyczyść całą figurę
+        file = files[idx]
+        data = file_data[file]
+        
+        # Pobierz nazwę folderu z kolumny "Person"
+        folder_name = df[df["File"] == file]["Person"].iloc[0]
+        
+        # Wykres prędkości
+        ax1 = plt.subplot(1, 3, 1)
+        ax1.plot(data["time_sec"], data["velocity_magnitude"], 'g-', label="Prędkość")
+        ax1.set_title(f"Prędkość - {file}")
+        ax1.set_xlabel("Czas (s)")
+        ax1.set_ylabel("Moduł prędkości")
+        ax1.legend()
+        
+        # Wykres rotacji głowy
+        ax2 = plt.subplot(1, 3, 2)
+        ax2.plot(data["time_sec"], data["headRotationAngle"], 'b-', label="Głowa")
+        ax2.set_title(f"Rotacja głowy - {file}")
+        ax2.set_xlabel("Czas (s)")
+        ax2.set_ylabel("Kąt (°)")
+        ax2.legend()
+        
+        # Wykres rotacji ciała
+        ax3 = plt.subplot(1, 3, 3)
+        ax3.plot(data["time_sec"], data["bodyRotationAngle"], 'r-', label="Ciało")
+        ax3.set_title(f"Rotacja ciała - {file}")
+        ax3.set_xlabel("Czas (s)")
+        ax3.set_ylabel("Kąt (°)")
+        ax3.legend()
+
+        # Dodaj napis z nazwą folderu w lewym górnym rogu
+        plt.text(0.01, 0.98, f"Folder: {folder_name}", 
+                 transform=fig.transFigure, fontsize=12, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.8))
+        
+        plt.suptitle(f"Plik {idx+1}/{len(files)}: {file} (←/→ aby przewijać)", fontsize=14)
+        plt.draw()
+    
+    def on_key(event):
+        """Obsługa klawiszy strzałek."""
+        if event.key == 'right':
+            current_file_idx[0] = (current_file_idx[0] + 1) % len(files)
+            update_plot(current_file_idx[0])
+        elif event.key == 'left':
+            current_file_idx[0] = (current_file_idx[0] - 1) % len(files)
+            update_plot(current_file_idx[0])
+    
+    fig.canvas.mpl_connect('key_press_event', on_key)
+    update_plot(current_file_idx[0])  # początkowe wyświetlenie
+    plt.show()
+
+    
 if __name__ == "__main__":
     # Ustal ścieżkę do folderu Stats (zakładamy, że skrypt jest uruchamiany z folderu, w którym są podfoldery osób)
     base_dir = os.path.dirname(__file__)
@@ -263,4 +446,11 @@ if __name__ == "__main__":
     display_basic_stats(df)
     
     # Utwórz wykresy porównawcze
-    plot_comparisons(df)
+    plot_comparisons_interactive(df)
+
+    df_samples = load_samples(base_dir)
+    
+    if df_samples.empty:
+        print("Brak danych sampli do analizy.")
+    else:
+        plot_combined_interactive(df_samples)  # zmieniona nazwa funkcji
