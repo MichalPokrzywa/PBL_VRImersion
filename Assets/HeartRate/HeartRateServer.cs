@@ -28,6 +28,9 @@ public class HeartRateServer : MonoBehaviour
     public string currentBPM { get; private set; } = "0.0";
     public string localIP { get; private set; } = "192.168.0.0";
     
+    private object _lock = new object();
+    public static HeartRateServer instance;
+
     [SerializeField]
     public int port { get; private set; } = 6547;
 
@@ -40,19 +43,35 @@ public class HeartRateServer : MonoBehaviour
     {
         get
         {
+            lock (_lock)
+            {
             List<(string, string)> result = new List<(string, string)>(hrReadings);
             hrReadings.Clear();
             return result;
+            }
         }
         private set { hrReadings = value; }
     }
 
     [SerializeField]
-    bool writeToFileInsteadOfMemoryStore = true;
+    bool writeToFileInsteadOfMemoryStore = false;
 
     void OnDestroy()
     {
         StopServer();
+    }
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
@@ -127,7 +146,10 @@ public class HeartRateServer : MonoBehaviour
                         string currentTime = DateTime.Now.ToString("HH:mm:ss");
                         if(writeToFileInsteadOfMemoryStore)
                             WriteToFile(heartRate, currentDate, currentTime);
-                        hrReadings.Add((heartRate, currentDate + " " + currentTime));
+                        lock (_lock)
+                        {
+                            hrReadings.Add((heartRate, currentTime));
+                        }
                         responseString = "OK";
                         currentBPM = heartRate;
                     }

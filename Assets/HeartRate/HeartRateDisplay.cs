@@ -10,8 +10,6 @@ public class HeartRateDisplay : MonoBehaviour
     private TMP_Text worldTextLine1; 
     [SerializeField]
     private TMP_Text worldTextLine2;
-    [SerializeField]
-    private HeartRateServer Instance;
 
     private Coroutine coroutine;
 
@@ -35,8 +33,8 @@ public class HeartRateDisplay : MonoBehaviour
     {
         while (true)
         {
-            worldTextLine1.text = $"IP: {Instance.localIP} : Port: {Instance.port}";
-            worldTextLine2.text = $"BPM: {Instance.currentBPM}";
+            worldTextLine1.text = $"IP: {HeartRateServer.instance.localIP} : Port: {HeartRateServer.instance.port}";
+            worldTextLine2.text = $"BPM: {HeartRateServer.instance.currentBPM}";
             yield return new WaitForSeconds(1f);
         }
     }

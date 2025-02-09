@@ -5,6 +5,7 @@ using UnityEditor.SearchService;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using System;
+using UnityEngine.Analytics;
 
 
 
@@ -21,6 +22,7 @@ public class HouseManager : MonoBehaviour
     private int packagesCounter = 0;
     public GameObject player;
     private bool gameWinState = false;
+    private bool gameStarted = false;
     private string winMssg = "Brawo dostarczy³eœ wszystkie paczki. DOBRA ROBOTA!";
     private string startMssg = "Dostarcz wszystkie przesy³ki do odpowiednich domów. Powodzenia!";
 
@@ -44,6 +46,13 @@ public class HouseManager : MonoBehaviour
         return randomIndex;
     }
 
+    void SortHouseList()
+    {
+        HouseList = HouseList
+            .OrderBy(h => h.HouseNumber)
+            .ThenBy(h => h.StreetColor.ToString()) // Sorting colors as strings
+            .ToList();
+    }
     // Metoda zwracaj¹ca losowy dom z listy
     public HouseStreet RandomizeHouse()
     {
@@ -62,15 +71,21 @@ public class HouseManager : MonoBehaviour
     {
         HouseStreet.onPackageDelivered += PackageDeliverd;
         HouseList = FindObjectsByType<HouseStreet>(FindObjectsSortMode.InstanceID).ToList();
+        UnityEngine.Random.InitState(seed);
+        SortHouseList();
         SetUp();
     }
 
     private void SetUp()
     {
         gameWinState = false;
-        infoPanel.ShowPanel(startMssg);
-        UnityEngine.Random.InitState(seed);
-        packagesCounter = 0;
+        infoPanel.ShowPanel(startMssg, StartGame);
+    }
+
+    private void StartGame()
+    {
+        gameStarted = true;
+         packagesCounter = 0;
         foreach (HouseStreet house in HouseList)
         {
             house.SetMailbox(false);
@@ -83,7 +98,7 @@ public class HouseManager : MonoBehaviour
 
     private void Reset()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 
     private void PackageDeliverd()
@@ -92,9 +107,9 @@ public class HouseManager : MonoBehaviour
         if (packagesCounter == packagesToWin)
         {
             gameWinState = true;
+            movementStats.StopMeasuring(true);
             UpdatePanel();
             Debug.Log("All packages delivered");
-            movementStats.StopMeasuring(true);
         }
         else PackageSpawn();
     }
@@ -113,8 +128,9 @@ public class HouseManager : MonoBehaviour
     }
     private void OnDestroy()
     {
-        if (packagesCounter != packagesToWin)
+        if (packagesCounter != packagesToWin && gameStarted)
             movementStats.StopMeasuring(false);
+        HouseStreet.onPackageDelivered -= PackageDeliverd;
     }
 
     void UpdatePanel()

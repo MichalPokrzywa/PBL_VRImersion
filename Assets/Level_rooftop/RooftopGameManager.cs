@@ -13,8 +13,7 @@ public class RooftopGameManager : MonoBehaviour
 
     private void Start()
     {
-        infoPanel.ShowPanel(startMssg);
-        StartCollectingInfo();
+        infoPanel.ShowPanel(startMssg, StartCollectingInfo);
         Finish.onFinishRoofTop += UpdatePanel;
         Death.onDeath += FallReset;
     }
@@ -28,7 +27,7 @@ public class RooftopGameManager : MonoBehaviour
     private void Reset()
     {
         
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(0,LoadSceneMode.Single);
     }
 
     private void StartCollectingInfo()
@@ -41,5 +40,11 @@ public class RooftopGameManager : MonoBehaviour
         string mssg = winMssg;
         movementStats.StopMeasuring(true);
         infoPanel.ShowPanel(winMssg, Reset);
+    }
+
+    private void OnDestroy()
+    {
+        Finish.onFinishRoofTop -= UpdatePanel;
+        Death.onDeath -= FallReset;
     }
 }
