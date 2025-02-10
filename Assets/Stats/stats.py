@@ -122,19 +122,19 @@ def plot_comparisons_interactive(df):
     # Dodajemy kolumnę z informacją o ukończeniu poziomu
     # (przyjmujemy, że kolumna "Completed" zawiera wartość True/False)
     df["LevelStatus"] = df["Completed"].apply(lambda x: "ukończony" if x else "nieukończony")
-
+    df_completed = df[df["Completed"] == True].copy()
     # Definiujemy kilka funkcji, z których każda rysuje inny wykres.
     # Każda funkcja zaczyna się od wyczyszczenia aktualnej figury (plt.clf()).
     
     def plot_session_by_sickness():
         plt.clf()
-        sns.barplot(data=df, x="Sickness", y="Session Duration (s)", hue="Level", errorbar="sd")
+        sns.barplot(data=df_completed, x="Sickness", y="Session Duration (s)", hue="Level", errorbar="sd")
         plt.title("Czas sesji wg. VR choroby i poziomu")
         plt.legend(loc='best')
 
     def plot_session_by_experience():
         plt.clf()
-        sns.barplot(data=df, x="Experience", y="Session Duration (s)", hue="Level", errorbar="sd")
+        sns.barplot(data=df_completed, x="Experience", y="Session Duration (s)", hue="Level", errorbar="sd")
         plt.title("Czas sesji wg. doświadczenia w VR i poziomu")
         plt.legend(loc='best')
 
@@ -158,7 +158,7 @@ def plot_comparisons_interactive(df):
             "Avg Body Rotation Speed (degrees/s)",
             "Sickness_bin"
         ]
-        df_numeric = df[numeric_cols].dropna()
+        df_numeric = df_completed[numeric_cols].dropna()
         healthy_df = df_numeric[df_numeric["Sickness_bin"] == 0]
         sick_df    = df_numeric[df_numeric["Sickness_bin"] == 1]
         
@@ -173,7 +173,14 @@ def plot_comparisons_interactive(df):
 
     def plot_scatter():
         plt.clf()
-        sns.scatterplot(data=df, x="Session Duration (s)", y="Total Head Rotation (degrees)",
+        sns.scatterplot(data=df_completed, x="Session Duration (s)", y="Total Head Rotation (degrees)",
+                        hue="Experience", style="Level", s=100)
+        plt.title("Rotacja głowy vs czas sesji")
+        plt.legend(loc='best')
+
+    def plot_scatterSick():
+        plt.clf()
+        sns.scatterplot(data=df_completed, x="Session Duration (s)", y="Total Head Rotation (degrees)",
                         hue="Sickness", style="Level", s=100)
         plt.title("Rotacja głowy vs czas sesji")
         plt.legend(loc='best')
@@ -185,11 +192,11 @@ def plot_comparisons_interactive(df):
         ax2 = plt.subplot(1, 3, 2)
         ax3 = plt.subplot(1, 3, 3)
         
-        sns.boxplot(data=df, x="Sickness", y="Dangerous Place Resumes", ax=ax1)
+        sns.boxplot(data=df_completed, x="Sickness", y="Dangerous Place Resumes", ax=ax1)
         ax1.set_title("Dangerous Place Resumes")
-        sns.boxplot(data=df, x="Sickness", y="Number of Pauses", ax=ax2)
+        sns.boxplot(data=df_completed, x="Sickness", y="Number of Pauses", ax=ax2)
         ax2.set_title("Number of Pauses")
-        sns.boxplot(data=df, x="Sickness", y="Total Pause Duration (s)", ax=ax3)
+        sns.boxplot(data=df_completed, x="Sickness", y="Total Pause Duration (s)", ax=ax3)
         ax3.set_title("Total Pause Duration (s)")
         
         plt.suptitle("Parametry pauz: zdrowi vs. chorzy")
@@ -203,13 +210,13 @@ def plot_comparisons_interactive(df):
         ax2 = plt.subplot(1, 3, 2)
         ax3 = plt.subplot(1, 3, 3)
         
-        sns.boxplot(data=df, x="Experience", y="Dangerous Place Resumes", ax=ax1)
+        sns.boxplot(data=df_completed, x="Experience", y="Dangerous Place Resumes", ax=ax1)
         ax1.set_title("Dangerous Place Resumes")
         
-        sns.boxplot(data=df, x="Experience", y="Number of Pauses", ax=ax2)
+        sns.boxplot(data=df_completed, x="Experience", y="Number of Pauses", ax=ax2)
         ax2.set_title("Number of Pauses")
         
-        sns.boxplot(data=df, x="Experience", y="Total Pause Duration (s)", ax=ax3)
+        sns.boxplot(data=df_completed, x="Experience", y="Total Pause Duration (s)", ax=ax3)
         ax3.set_title("Total Pause Duration (s)")
         
         plt.suptitle("Parametry pauz: doświadczony vs. nie doświadczony")
@@ -222,6 +229,7 @@ def plot_comparisons_interactive(df):
                   plot_completed_status,
                   plot_correlation,
                   plot_scatter,
+                  plot_scatterSick,
                   plot_pause_comparison,
                   plot_pause_comparison_experience]
 
