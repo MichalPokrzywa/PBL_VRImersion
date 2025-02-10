@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
+sns.set(style="whitegrid")
 
 # Ustawienia wykresów
 sns.set(style="whitegrid")
@@ -269,7 +270,7 @@ def load_samples(base_dir):
     Zwraca DataFrame z kolumnami:
       Person, Level, File, time,
       headRotationAngle, bodyRotationAngle, headRotationSpeed, bodyRotationSpeed,
-      velocity_x, velocity_y, velocity_z, velocity_magnitude.
+      velocity_x, velocity_y, velocity_z, velocity_magnitude, Completed.
     Dodaje pasek postępu przy przetwarzaniu plików.
     """
     sample_rows = []
@@ -291,6 +292,8 @@ def load_samples(base_dir):
             print(f"Error loading {file_path}: {e}")
             continue
         
+        # Pobieramy status ukończenia sesji z pliku JSON (jeśli nie ma – domyślnie False)
+        completed = data.get("completed", False)
         samples = data.get("samples", [])
         for sample in samples:
             t = sample.get("time")
@@ -330,26 +333,32 @@ def load_samples(base_dir):
                 "velocity_x": vx,
                 "velocity_y": vy,
                 "velocity_z": vz,
-                "velocity_magnitude": vmag
+                "velocity_magnitude": vmag,
+                "Completed": completed
             })
             
     df_samples = pd.DataFrame(sample_rows)
     return df_samples
 
 
-from tqdm import tqdm
-
 def plot_combined_interactive(df_samples):
     """
     Tworzy interaktywne wykresy z możliwością przewijania plików strzałkami.
+    Uwzględnia tylko ukończone przejścia (Completed == True).
     Dla każdego pliku wyświetla trzy wykresy obok siebie:
     - prędkość vs czas,
     - rotacja głowy vs czas,
     - rotacja ciała vs czas.
     """
-    # Przygotowanie danych
-    df = df_samples.copy()
+    # Filtrowanie ukończonych przejść
+    df = df_samples[df_samples["Completed"] == True].copy()
+    if df.empty:
+        print("Brak ukończonych sesji do wyświetlenia.")
+        return
+
     df["time_sec"] = df["time"].astype(int)
+
+    df = df.sort_values(by="Level")
     
     # Lista unikalnych plików (sesji)
     files = df["File"].unique()
@@ -362,8 +371,8 @@ def plot_combined_interactive(df_samples):
     for file in files:
         df_file = df[df["File"] == file]
         grouped = df_file.groupby("time_sec").agg({
-            "headRotationAngle": "mean",
-            "bodyRotationAngle": "mean",
+            "headRotationAngle": "sum",
+            "bodyRotationAngle": "sum",
             "velocity_magnitude": "mean"
         }).reset_index()
         file_data[file] = grouped
@@ -425,6 +434,7 @@ def plot_combined_interactive(df_samples):
     fig.canvas.mpl_connect('key_press_event', on_key)
     update_plot(current_file_idx[0])  # początkowe wyświetlenie
     plt.show()
+
 
     
 if __name__ == "__main__":
