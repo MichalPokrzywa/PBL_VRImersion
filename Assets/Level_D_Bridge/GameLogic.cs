@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -112,8 +113,10 @@ public class GameLogic : MonoBehaviour
         gameWinState = true;
         timer.StopTimer();
         stats.StopMeasuring(true);
+
         string mssg = winMssg + $" Twój czas: {timer.TimePassed}";
-        infoPanel.ShowPanel(mssg, RestartGame);
+        var actions = new VRClickablePanel.ButtonAction[] { new("Graj jeszcze raz", Reset), new(ReturnToMenu) };
+        infoPanel.ShowPanel(mssg, actions);
     }
 
     void OnGameLost()
@@ -126,7 +129,7 @@ public class GameLogic : MonoBehaviour
         gameWinState = false;
         timer.StopTimer();
         stats.StopMeasuring(false);
-        RestartGame();
+        Reset();
     }
 
     public void ResetAllBridges()
@@ -137,9 +140,14 @@ public class GameLogic : MonoBehaviour
         }
     }
 
-    void RestartGame()
+    void ReturnToMenu()
     {
         SceneManager.LoadScene(0, LoadSceneMode.Single);
+    }
+
+    void Reset()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 
     void ClearState()
@@ -149,8 +157,11 @@ public class GameLogic : MonoBehaviour
         checkpointManager.ActivateCheckpoints();
         touchedCheckpoints.Clear();
         player.RestartPosition();
+
+        var actions = new VRClickablePanel.ButtonAction[] { new(ActivateGame), new(ReturnToMenu) };
+
         if (VRMode)
-            infoPanel.ShowPanel(startMssg, ActivateGame);
+            infoPanel.ShowPanel(startMssg, actions);
     }
 
     void ActivateGame()

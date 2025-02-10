@@ -1,50 +1,84 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
 public class VRClickablePanel : MonoBehaviour
 {
-    [SerializeField] TextMeshPro text;
-    [SerializeField] Button button;
+    [SerializeField] GameObject textButtonPrefab;
+    [SerializeField] TextMeshPro textComponent;
+    [SerializeField] List<TextButton> textButtons;
 
-    bool removeActionOnClose = true;
-    UnityAction registeredAction;
+    public struct ButtonAction
+    {
+        public ButtonAction(string text, UnityAction action)
+        {
+            this.text = text;
+            this.action = action;
+        }
+        public ButtonAction(UnityAction action)
+        {
+            this.text = string.Empty;
+            this.action = action;
+        }
+        string text;
+        UnityAction action;
+
+        public string Text => text;
+        public UnityAction Action => action;
+    }
 
     void Start()
     {
-        button.onClick.AddListener(() => DefaultButtonAction());
+        foreach (var textButton in textButtons)
+        {
+            textButton.Button.onClick.AddListener(ClosePanel);
+        }
     }
 
-    public void ShowPanel(string text, UnityAction action=null)
+    void OnDestroy()
     {
-        SetText(text);
-        // Remove previous action if it was set to be removed
-        if (registeredAction != null && removeActionOnClose)
+        foreach (var textButton in textButtons)
         {
-            button.onClick.RemoveListener(registeredAction);
+            if (textButton != null)
+                textButton.Button?.onClick.RemoveListener(ClosePanel);
         }
-        // Set new action if provided
-        if (action != null)
+    }
+
+    public void ShowPanel(string text, ButtonAction[] buttonActions)
+    {
+        foreach (var textButton in textButtons)
         {
-            SetButtonAction(action);
+            textButton.gameObject.SetActive(false);
         }
+        for (int i = 0; i < buttonActions.Length; i++)
+        {
+            if (i >= textButtons.Count)
+            {
+                var newButton = Instantiate(textButtonPrefab, transform).GetComponent<TextButton>();
+                textButtons.Add(newButton);
+            }
+
+            string buttonText = buttonActions[i].Text;
+            if (buttonText != string.Empty)
+                textButtons[i].SetText(buttonText);
+
+            textButtons[i].SetButtonAction(buttonActions[i].Action);
+            textButtons[i].gameObject.SetActive(true);
+        }
+        textComponent.text = text;
         gameObject.SetActive(true);
     }
 
-    public void SetText(string newText)
+    void ClosePanel()
     {
-        text.text = newText;
-    }
-
-    public void SetButtonAction(UnityAction newAction)
-    {
-        registeredAction = newAction;
-        button.onClick.AddListener(registeredAction);
-    }
-
-    void DefaultButtonAction()
-    {
+        foreach (var textButton in textButtons)
+        {
+            if (textButton.RemoveActionOnClose)
+            {
+                textButton.RemoveButtonAction();
+            }
+        }
         gameObject.SetActive(false);
     }
 }

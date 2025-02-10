@@ -13,7 +13,8 @@ public class RooftopGameManager : MonoBehaviour
 
     private void Start()
     {
-        infoPanel.ShowPanel(startMssg, StartCollectingInfo);
+        var actions = new VRClickablePanel.ButtonAction[] { new(StartCollectingInfo), new(ReturnToMenu) };
+        infoPanel.ShowPanel(startMssg, actions);
         Finish.onFinishRoofTop += UpdatePanel;
         Death.onDeath += FallReset;
     }
@@ -26,8 +27,12 @@ public class RooftopGameManager : MonoBehaviour
 
     private void Reset()
     {
-        
-        SceneManager.LoadScene(0,LoadSceneMode.Single);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+    }
+
+    private void ReturnToMenu()
+    {
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 
     private void StartCollectingInfo()
@@ -39,7 +44,8 @@ public class RooftopGameManager : MonoBehaviour
     {
         string mssg = winMssg;
         movementStats.StopMeasuring(true);
-        infoPanel.ShowPanel(winMssg, Reset);
+        var actions = new VRClickablePanel.ButtonAction[] { new("Graj jeszcze raz", Reset), new(ReturnToMenu) };
+        infoPanel.ShowPanel(winMssg, actions);
     }
 
     private void OnDestroy()

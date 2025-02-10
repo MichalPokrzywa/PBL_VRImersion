@@ -26,6 +26,7 @@ public class HouseManager : MonoBehaviour
     private string winMssg = "Brawo dostarczy³eœ wszystkie paczki. DOBRA ROBOTA!";
     private string startMssg = "Dostarcz wszystkie przesy³ki do odpowiednich domów. Powodzenia!";
 
+
     // Metoda dodaj¹ca nowy dom do listy
     public void AddHouse(HouseStreet house)
     {
@@ -79,7 +80,8 @@ public class HouseManager : MonoBehaviour
     private void SetUp()
     {
         gameWinState = false;
-        infoPanel.ShowPanel(startMssg, StartGame);
+        var actions = new VRClickablePanel.ButtonAction[] { new(StartGame), new(ReturnToMenu) };
+        infoPanel.ShowPanel(startMssg, actions);
     }
 
     private void StartGame()
@@ -97,6 +99,11 @@ public class HouseManager : MonoBehaviour
     }
 
     private void Reset()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
+    }
+
+    private void ReturnToMenu()
     {
         SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
@@ -136,6 +143,7 @@ public class HouseManager : MonoBehaviour
     void UpdatePanel()
     {
         string mssg = winMssg;
-        infoPanel.ShowPanel(winMssg, Reset);
+        var actions = new VRClickablePanel.ButtonAction[] { new("Graj jeszcze raz", Reset), new(ReturnToMenu) };
+        infoPanel.ShowPanel(winMssg, actions);
     }
 }
