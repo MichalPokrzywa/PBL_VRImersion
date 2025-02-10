@@ -8,13 +8,15 @@ public class RooftopGameManager : MonoBehaviour
     [SerializeField] VRClickablePanel infoPanel;
     public MovementStats movementStats;
     public GameObject player;
+    public StartMovementBlockade blockade;
     private string winMssg = "Gratuluje dotarcia do mety!!!";
     private string startMssg = "Twoim zadaniem jest przedostaæ siê na ostatni dach za pomoc¹ desek z, których utworzysz most. Powodznie!";
 
     private void Start()
     {
-        var actions = new VRClickablePanel.ButtonAction[] { new(StartCollectingInfo), new(ReturnToMenu) };
+		var actions = new VRClickablePanel.ButtonAction[] { new(StartCollectingInfo), new(ReturnToMenu) };
         infoPanel.ShowPanel(startMssg, actions);
+        blockade.BlockMovement();
         Finish.onFinishRoofTop += UpdatePanel;
         Death.onDeath += FallReset;
     }
@@ -37,6 +39,7 @@ public class RooftopGameManager : MonoBehaviour
 
     private void StartCollectingInfo()
     {
+        blockade.UnblockMovement();
         movementStats.StartMeasuring($"Assets/Stats/Level_Rooftop_{System.DateTime.Now.ToString().Replace(' ', '_').Replace(':', '_')}.json");
     }
 
