@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
+using HR;
 
 public class MovementStats : MonoBehaviour
 {
@@ -92,6 +93,7 @@ public class MovementStats : MonoBehaviour
         public List<PauseData> teleportResumeTime;
         public List<PauseData> dangerousPlaceResumeTime;
         public List<Sample> samples;
+        public List<(string, string)> hrReadings;
     }
 
     void Start()
@@ -323,13 +325,14 @@ public class MovementStats : MonoBehaviour
             maxBodyRotationSpeed = samples.Max(s => s.rotation.bodyRotationSpeed),
             avgHeadRotationSpeed = samples.Average(s => s.rotation.headRotationSpeed),
             avgBodyRotationSpeed = samples.Average(s => s.rotation.bodyRotationSpeed),
+            hrReadings = HeartRateServer.instance.HrReadings,
             pauseData = pauseData,
             teleportResumeTime = teleportMovementResumeTime,
             dangerousPlaceResumeTime = dangerousPlaceMovementResumeTime,
             samples = samples,
         };
 
-        var json = JsonUtility.ToJson(fileData);
+        var json = JsonUtility.ToJson(fileData, true);
         System.IO.File.WriteAllText(fileName, json);
     }
 }
