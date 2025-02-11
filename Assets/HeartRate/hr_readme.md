@@ -21,3 +21,19 @@
 When server is started, you can test its functionality by (having a watch duh..) or writing in cmd:
 curl -X POST -d "{heartRate:666}" http://<YOUR LOCAL IP>:<PORT>/
 Results will be written to a file (line by line in csv fashion) located in Assets/<YOUR PATH AND FILE NAME>
+
+# ADB COMMANDS - Installation through wifi
+1. `adb pair <watch IP>:<watch PORT>`
+2. Provide paring code
+3. `adb connect <watch IP>:<watch PORT>`
+4. `adb install <PATH TO .apk>`
+5. `adb shell am start -n com.pbl.hr_tread/.presentation.MainActivity`
+
+## Manually grant permissions:
+- adb shell pm grant com.pbl.hr_tread android.permission.BODY_SENSORS
+- adb shell pm grant com.pbl.hr_tread android.permission.FOREGROUND_SERVICE
+- adb shell pm grant com.pbl.hr_tread android.permission.WAKE_LOCK
+- adb shell pm grant com.pbl.hr_tread android.permission.INTERNET
+- adb shell pm grant com.pbl.hr_tread android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+- adb shell pm grant com.pbl.hr_tread android.permission.BODY_SENSORS_BACKGROUND
+- adb shell pm grant com.pbl.hr_tread android.permission.FOREGROUND_SERVICE_HEALTH
