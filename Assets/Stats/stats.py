@@ -99,7 +99,7 @@ def add_group_columns(df):
     df["Experience"] = df["Person"].apply(get_experience)
     
     # Dodatkowo tworzymy kolumnę binarną (1 = chory, 0 = zdrowy) przydatną do analizy korelacji
-    df["Sickness_bin"] = df["Sickness"].apply(lambda x: 1 if x=="chory" else 0)
+    df["Sickness_bin"] = df["Sickness"].apply(lambda x: 1 if x=="sick" else 0)
     return df
 
 def display_basic_stats(df):
@@ -174,14 +174,14 @@ def plot_comparisons_interactive(df):
     def plot_scatter():
         plt.clf()
         sns.scatterplot(data=df_completed, x="Session Duration (s)", y="Total Head Rotation (degrees)",
-                        hue="Experience", style="Level", s=100)
+                        palette='Set1',hue="Experience", style="Level", s=100)
         plt.title("Head Rotation vs. Session Duration by Experience")
         plt.legend(loc='best')
 
     def plot_scatterSick():
         plt.clf()
         sns.scatterplot(data=df_completed, x="Session Duration (s)", y="Total Head Rotation (degrees)",
-                        hue="Sickness", style="Level", s=100)
+                        palette='Set2',hue="Sickness", style="Level", s=100)
         plt.title("Head Rotation vs. Session Duration by VR Sickness")
         plt.legend(loc='best')
 
@@ -192,11 +192,11 @@ def plot_comparisons_interactive(df):
         ax2 = plt.subplot(1, 3, 2)
         ax3 = plt.subplot(1, 3, 3)
         
-        sns.boxplot(data=df_completed, x="Sickness", y="Dangerous Place Resumes", ax=ax1)
+        sns.boxplot(data=df_completed, x="Sickness", palette='Set2', hue='Sickness', y="Dangerous Place Resumes", ax=ax1)
         ax1.set_title("Dangerous Place Resumes")
-        sns.boxplot(data=df_completed, x="Sickness", y="Number of Pauses", ax=ax2)
+        sns.boxplot(data=df_completed, x="Sickness", palette='Set2', hue='Sickness', y="Number of Pauses", ax=ax2)
         ax2.set_title("Number of Pauses")
-        sns.boxplot(data=df_completed, x="Sickness", y="Total Pause Duration (s)", ax=ax3)
+        sns.boxplot(data=df_completed, x="Sickness", palette='Set2', hue='Sickness', y="Total Pause Duration (s)", ax=ax3)
         ax3.set_title("Total Pause Duration (s)")
         
         plt.suptitle("Pause Parameters: Healthy vs. Sick")
@@ -210,18 +210,72 @@ def plot_comparisons_interactive(df):
         ax2 = plt.subplot(1, 3, 2)
         ax3 = plt.subplot(1, 3, 3)
         
-        sns.boxplot(data=df_completed, x="Experience", y="Dangerous Place Resumes", ax=ax1)
+        sns.boxplot(data=df_completed, x="Experience", y="Dangerous Place Resumes", palette='Set1', hue='Experience', ax=ax1)
         ax1.set_title("Dangerous Place Resumes")
         
-        sns.boxplot(data=df_completed, x="Experience", y="Number of Pauses", ax=ax2)
+        sns.boxplot(data=df_completed, x="Experience", y="Number of Pauses", palette='Set1', hue='Experience', ax=ax2)
         ax2.set_title("Number of Pauses")
         
-        sns.boxplot(data=df_completed, x="Experience", y="Total Pause Duration (s)", ax=ax3)
+        sns.boxplot(data=df_completed, x="Experience", y="Total Pause Duration (s)", palette='Set1', hue='Experience', ax=ax3)
         ax3.set_title("Total Pause Duration (s)")
         
         plt.suptitle("Pause Parameters: Experienced vs. Inexperienced")
         plt.tight_layout(rect=[0, 0, 1, 0.95])
         plt.draw()
+
+    def calculate_and_plot_pause_quantiles():
+        """
+        Calculates the 25th, 50th, and 75th percentiles for pause durations for both sick and healthy people,
+        and displays the results using box plots and bar plots.
+
+        Parameters:
+        df (pd.DataFrame): The DataFrame containing the pause data and sickness status.
+        """
+        # Filter the DataFrame for sick and healthy people
+        healthy_pauses = df[df['Sickness'] == 'healthy']['Total Pause Duration (s)']
+        sick_pauses = df[df['Sickness'] == 'sick']['Total Pause Duration (s)']
+
+        # Calculate the quantiles
+        healthy_quantiles = np.percentile(healthy_pauses, [25, 50, 75])
+        sick_quantiles = np.percentile(sick_pauses, [25, 50, 75])
+
+        # Create a DataFrame for plotting
+        quantile_data = pd.DataFrame({
+            'Group': ['Healthy', 'Healthy', 'Healthy', 'Sick', 'Sick', 'Sick'],
+            'Quantile': ['25%', '50%', '75%', '25%', '50%', '75%'],
+            'Value': [healthy_quantiles[0], healthy_quantiles[1], healthy_quantiles[2],
+                      sick_quantiles[0], sick_quantiles[1], sick_quantiles[2]]
+        })
+        plt.clf()
+        # Plotting
+        # Box plot for pause durations
+        plt.subplot(1, 2, 1)
+        sns.boxplot(x='Sickness', y='Total Pause Duration (s)', data=df, palette='Set2', hue='Sickness', legend=False)
+        plt.title('Pause Durations: Healthy vs Sick')
+        plt.xlabel('Group')
+        plt.ylabel('Total Pause Duration (s)')
+
+        # Bar plot for quantiles
+        plt.subplot(1, 2, 2)
+        bar_plot = sns.barplot(x='Group', y='Value', hue='Quantile', data=quantile_data, palette='coolwarm')
+        plt.title('Quantiles of Pause Durations')
+        plt.xlabel('Group')
+        plt.ylabel('Pause Duration (s)')
+        plt.legend(title='Quantile')
+        # Add values on top of the bars
+        for p in bar_plot.patches:
+            if p.get_height() == 0:
+                continue
+            bar_plot.annotate(f'{p.get_height():.2f}',
+                              (p.get_x() + p.get_width() / 2., p.get_height()),
+                              ha='center', va='center',
+                              xytext=(0, 5),
+                              textcoords='offset points')
+
+        plt.tight_layout()
+        plt.draw()
+
+
 
     # Umieszczamy funkcje w liście – będą przełączane klawiszami strzałek
     plot_funcs = [plot_session_by_sickness,
@@ -231,7 +285,8 @@ def plot_comparisons_interactive(df):
                   plot_scatter,
                   plot_scatterSick,
                   plot_pause_comparison,
-                  plot_pause_comparison_experience]
+                  plot_pause_comparison_experience,
+                  calculate_and_plot_pause_quantiles]
 
     # Używamy listy jednoelementowej do przechowania aktualnego indeksu (aby można było modyfikować zmienną z wnętrza funkcji)
     current_plot = [0]
@@ -271,6 +326,7 @@ def display_stats(stats_data):
                 print()  # nowa linia między sesjami
         print("-" * 40)
 
+
 def load_samples(base_dir):
     """
     Przeszukuje folder base_dir (który zawiera podfoldery dla osób) i dla każdego pliku JSON
@@ -280,9 +336,13 @@ def load_samples(base_dir):
       headRotationAngle, bodyRotationAngle, headRotationSpeed, bodyRotationSpeed,
       velocity_x, velocity_y, velocity_z, velocity_magnitude, Completed.
     Dodaje pasek postępu przy przetwarzaniu plików.
+    Tylko pierwsze ukończenie każdego poziomu dla każdej osoby jest zapisywane.
     """
     sample_rows = []
     all_files = []
+
+    # Słownik do śledzenia, czy osoba już ukończyła dany poziom
+    completed_levels = {}
 
     # Zbieramy wszystkie pliki spełniające kryteria
     for person in os.listdir(base_dir):
@@ -291,7 +351,7 @@ def load_samples(base_dir):
             for file_name in os.listdir(person_path):
                 if file_name.endswith('.json') and file_name.startswith("Level_"):
                     all_files.append((person, file_name, os.path.join(person_path, file_name)))
-                    
+
     # Przetwarzamy pliki z użyciem paska postępu
     for person, file_name, file_path in tqdm(all_files, desc="Processing JSON files", unit="file"):
         try:
@@ -299,9 +359,25 @@ def load_samples(base_dir):
         except Exception as e:
             print(f"Error loading {file_path}: {e}")
             continue
-        
+
         # Pobieramy status ukończenia sesji z pliku JSON (jeśli nie ma – domyślnie False)
         completed = data.get("completed", False)
+
+        # Wyciągamy Level z nazwy pliku (np. z "Level_E_Seed123_06.02.2025_19_38_21.json" wyciągamy "E")
+        parts = file_name.split('_')
+        level = parts[1] if len(parts) >= 2 else "Unknown"
+
+        # Sprawdzamy, czy osoba już ukończyła ten poziom
+        if completed:
+            if person not in completed_levels:
+                completed_levels[person] = set()
+            if level in completed_levels[person]:
+                # Osoba już ukończyła ten poziom, pomijamy ten plik
+                continue
+            else:
+                # Zaznaczamy, że osoba ukończyła ten poziom
+                completed_levels[person].add(level)
+
         samples = data.get("samples", [])
         for sample in samples:
             t = sample.get("time")
@@ -313,7 +389,7 @@ def load_samples(base_dir):
             bodyRotAngle = rotation.get("bodyRotationAngle")
             headRotSpeed = rotation.get("headRotationSpeed")
             bodyRotSpeed = rotation.get("bodyRotationSpeed")
-            
+
             # Dane o prędkości – z pola "movement" -> "velocity"
             movement = sample.get("movement", {})
             velocity = movement.get("velocity", {})
@@ -321,16 +397,23 @@ def load_samples(base_dir):
             vy = velocity.get("y")
             vz = velocity.get("z")
             if vx is not None and vy is not None and vz is not None:
-                vmag = (vx**2 + vy**2 + vz**2) ** 0.5
+                vmag = (vx ** 2 + vy ** 2 + vz ** 2) ** 0.5
             else:
                 vmag = None
-            
-            # Wyciągamy Level z nazwy pliku (np. z "Level_E_Seed123_06.02.2025_19_38_21.json" wyciągamy "E")
-            parts = file_name.split('_')
-            level = parts[1] if len(parts) >= 2 else "Unknown"
-            
+
+            def get_sickness(person):
+                return "sick" if "_ch" in person.lower() else "healthy"
+
+            def get_experience(person):
+                return "not experienced" if "_nd" in person.lower() else "experienced"
+
+            experience = get_experience(person)
+            healthy = get_sickness(person)
+
             sample_rows.append({
                 "Person": person,
+                "Experience": experience,
+                "Healthy": healthy,
                 "Level": level,
                 "File": file_name,
                 "time": t,
@@ -344,10 +427,9 @@ def load_samples(base_dir):
                 "velocity_magnitude": vmag,
                 "Completed": completed
             })
-            
+
     df_samples = pd.DataFrame(sample_rows)
     return df_samples
-
 
 def plot_combined_interactive(df_samples):
     """
@@ -364,16 +446,18 @@ def plot_combined_interactive(df_samples):
         print("Brak ukończonych sesji do wyświetlenia.")
         return
 
+    # Convert time to seconds (if not already in seconds)
     df["time_sec"] = df["time"].astype(int)
 
+    # Sort by Level for consistent plotting
     df = df.sort_values(by="Level")
-    
+
     # Lista unikalnych plików (sesji)
     files = df["File"].unique()
     if len(files) == 0:
         print("Brak danych do wyświetlenia.")
         return
-    
+
     # Przechowujemy dane zgrupowane dla każdego pliku
     file_data = {}
     for file in files:
@@ -384,52 +468,92 @@ def plot_combined_interactive(df_samples):
             "velocity_magnitude": "mean"
         }).reset_index()
         file_data[file] = grouped
-    
+
     # Inicjalizacja interfejsu
     current_file_idx = [0]  # przechowuje aktualny indeks (użyte jako lista, by można modyfikować)
     fig = plt.figure(figsize=(18, 5))
     plt.subplots_adjust(top=0.85, wspace=0.3)
-    
+
     def update_plot(idx):
         """Rysuje wykresy dla pliku o podanym indeksie."""
         plt.clf()  # wyczyść całą figurę
         file = files[idx]
         data = file_data[file]
-        
+
         # Pobierz nazwę folderu z kolumny "Person"
         folder_name = df[df["File"] == file]["Person"].iloc[0]
-        
+        sickness = df[df["File"] == file]["Healthy"].iloc[0]
+        experience = df[df["File"] == file]["Experience"].iloc[0]
         # Wykres prędkości
-        ax1 = plt.subplot(1, 3, 1)
-        ax1.plot(data["time_sec"], data["velocity_magnitude"], 'g-', label="Prędkość")
-        ax1.set_title(f"Velocity - {file}")
+        ax1 = plt.subplot(2, 3, 1)
+        ax1.plot(data["time_sec"], data["velocity_magnitude"], 'g-', label="Velocity")
+        ax1.set_title(f"Velocity")
         ax1.set_xlabel("Time (s)")
         ax1.set_ylabel("Velocity Magnitude")
         ax1.legend()
-        
+
         # Wykres rotacji głowy
-        ax2 = plt.subplot(1, 3, 2)
-        ax2.plot(data["time_sec"], data["headRotationAngle"], 'b-', label="Głowa")
-        ax2.set_title(f"Head Rotation - {file}")
+        ax2 = plt.subplot(2, 3, 2)
+        ax2.plot(data["time_sec"], data["headRotationAngle"], 'b-', label="Head")
+        ax2.set_title(f"Head Rotation")
         ax2.set_xlabel("Time (s)")
         ax2.set_ylabel("Angle (°)")
         ax2.legend()
-        
+
         # Wykres rotacji ciała
-        ax3 = plt.subplot(1, 3, 3)
-        ax3.plot(data["time_sec"], data["bodyRotationAngle"], 'r-', label="Ciało")
-        ax3.set_title(f"Body Rotation - {file}")
+        ax3 = plt.subplot(2, 3, 3)
+        ax3.plot(data["time_sec"], data["bodyRotationAngle"], 'r-', label="Body")
+        ax3.set_title(f"Body Rotation")
         ax3.set_xlabel("Time (s)")
         ax3.set_ylabel("Angle (°)")
         ax3.legend()
 
+        ax4 = plt.subplot(2, 3, 6)
+        ax4.plot(data["time_sec"], data["velocity_magnitude"], 'g-', label="Velocity")
+        ax4.set_xlabel("Time (s)")
+        ax4.set_ylabel("Velocity Magnitude", color='g')
+        ax4.tick_params(axis='y', labelcolor='g')
+
+        # Create a second y-axis for body rotation angle
+        ax5 = ax4.twinx()
+        ax5.plot(data["time_sec"], data["bodyRotationAngle"], 'r-', label="Body")
+        ax5.set_ylabel("Body Rotation Angle (°)", color='r')
+        ax5.tick_params(axis='y', labelcolor='r')
+
+        ax4.set_title(f"Velocity & Body Rotation")
+
+        # Combine legends from both axes
+        lines, labels = ax4.get_legend_handles_labels()
+        lines2, labels2 = ax5.get_legend_handles_labels()
+        ax4.legend(lines + lines2, labels + labels2, loc='upper left')
+
+        ax7 = plt.subplot(2, 3, 5)
+        ax7.plot(data["time_sec"], data["velocity_magnitude"], 'g-', label="Velocity")
+        ax7.set_xlabel("Time (s)")
+        ax7.set_ylabel("Velocity Magnitude", color='g')
+        ax7.tick_params(axis='y', labelcolor='g')
+
+        # Create a second y-axis for body rotation angle
+        ax8 = ax7.twinx()
+        ax8.plot(data["time_sec"], data["headRotationAngle"], 'b-', label="Head")
+        ax8.set_ylabel("Head Rotation Angle (°)", color='b')
+        ax8.tick_params(axis='y', labelcolor='b')
+
+        ax7.set_title(f"Velocity & Head Rotation")
+
+        # Combine legends from both axes
+        lines, labels = ax7.get_legend_handles_labels()
+        lines2, labels2 = ax8.get_legend_handles_labels()
+        ax7.legend(lines + lines2, labels + labels2, loc='upper left')
+
         # Dodaj napis z nazwą folderu w lewym górnym rogu
-        plt.text(0.01, 0.98, f"Folder: {folder_name}", 
-                 transform=fig.transFigure, fontsize=12, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.8))
-        
-        plt.suptitle(f"Plik {idx+1}/{len(files)}: {file} (←/→ to navigate)", fontsize=14)
+        plt.text(0.01, 0.98, f"Folder: {folder_name}\nHealth: {sickness}\nExperience: {experience}",
+                 transform=fig.transFigure, fontsize=12, verticalalignment='top',
+                 bbox=dict(facecolor='white', alpha=0.8))
+
+        plt.suptitle(f"Plik {idx + 1}/{len(files)}: {file} (←/→ to navigate)", fontsize=14)
         plt.draw()
-    
+
     def on_key(event):
         """Obsługa klawiszy strzałek."""
         if event.key == 'right':
@@ -438,12 +562,10 @@ def plot_combined_interactive(df_samples):
         elif event.key == 'left':
             current_file_idx[0] = (current_file_idx[0] - 1) % len(files)
             update_plot(current_file_idx[0])
-    
+
     fig.canvas.mpl_connect('key_press_event', on_key)
     update_plot(current_file_idx[0])  # początkowe wyświetlenie
     plt.show()
-
-
     
 if __name__ == "__main__":
     # Ustal ścieżkę do folderu Stats (zakładamy, że skrypt jest uruchamiany z folderu, w którym są podfoldery osób)
@@ -472,3 +594,5 @@ if __name__ == "__main__":
         print("Brak danych sampli do analizy.")
     else:
         plot_combined_interactive(df_samples)  # zmieniona nazwa funkcji
+
+
