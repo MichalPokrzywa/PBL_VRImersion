@@ -90,10 +90,10 @@ def add_group_columns(df):
       - 'Experience': "nie doświadczony" jeśli '_nd' znajduje się w nazwie, w przeciwnym razie "doświadczony"
     """
     def get_sickness(person):
-        return "chory" if "_ch" in person.lower() else "zdrowy"
+        return "sick" if "_ch" in person.lower() else "healthy"
     
     def get_experience(person):
-        return "nie doświadczony" if "_nd" in person.lower() else "doświadczony"
+        return "not experienced" if "_nd" in person.lower() else "experienced"
     
     df["Sickness"] = df["Person"].apply(get_sickness)
     df["Experience"] = df["Person"].apply(get_experience)
@@ -121,7 +121,7 @@ def plot_comparisons_interactive(df):
 
     # Dodajemy kolumnę z informacją o ukończeniu poziomu
     # (przyjmujemy, że kolumna "Completed" zawiera wartość True/False)
-    df["LevelStatus"] = df["Completed"].apply(lambda x: "ukończony" if x else "nieukończony")
+    df["LevelStatus"] = df["Completed"].apply(lambda x: "Completed" if x else "not Completed")
     df_completed = df[df["Completed"] == True].copy()
     # Definiujemy kilka funkcji, z których każda rysuje inny wykres.
     # Każda funkcja zaczyna się od wyczyszczenia aktualnej figury (plt.clf()).
@@ -129,19 +129,19 @@ def plot_comparisons_interactive(df):
     def plot_session_by_sickness():
         plt.clf()
         sns.barplot(data=df_completed, x="Sickness", y="Session Duration (s)", hue="Level", errorbar="sd")
-        plt.title("Czas sesji wg. VR choroby i poziomu")
+        plt.title("Session Duration by VR Sickness and Level")
         plt.legend(loc='best')
 
     def plot_session_by_experience():
         plt.clf()
         sns.barplot(data=df_completed, x="Experience", y="Session Duration (s)", hue="Level", errorbar="sd")
-        plt.title("Czas sesji wg. doświadczenia w VR i poziomu")
+        plt.title("Session Duration by VR Experience and Level")
         plt.legend(loc='best')
 
     def plot_completed_status():
         plt.clf()
         sns.barplot(data=df, x="LevelStatus", y="Session Duration (s)", hue="Level", errorbar="sd")
-        plt.title("Czas sesji wg. ukończenia poziomu")
+        plt.title("Session Duration by Level Completion")
         plt.legend(loc='best')
 
     def plot_correlation():
@@ -163,11 +163,11 @@ def plot_comparisons_interactive(df):
         sick_df    = df_numeric[df_numeric["Sickness_bin"] == 1]
         
         sns.heatmap(healthy_df.corr(), annot=True, cmap="coolwarm", ax=ax1)
-        ax1.set_title("Korelacja - zdrowi")
+        ax1.set_title("Correlation - Healthy")
         sns.heatmap(sick_df.corr(), annot=True, cmap="coolwarm", ax=ax2)
-        ax2.set_title("Korelacja - chorzy")
+        ax2.set_title("Correlation - Sick")
         
-        plt.suptitle("Macierze korelacji")
+        plt.suptitle("Correlation Matrices")
         plt.draw()
 
 
@@ -175,14 +175,14 @@ def plot_comparisons_interactive(df):
         plt.clf()
         sns.scatterplot(data=df_completed, x="Session Duration (s)", y="Total Head Rotation (degrees)",
                         hue="Experience", style="Level", s=100)
-        plt.title("Rotacja głowy vs czas sesji")
+        plt.title("Head Rotation vs. Session Duration by Experience")
         plt.legend(loc='best')
 
     def plot_scatterSick():
         plt.clf()
         sns.scatterplot(data=df_completed, x="Session Duration (s)", y="Total Head Rotation (degrees)",
                         hue="Sickness", style="Level", s=100)
-        plt.title("Rotacja głowy vs czas sesji")
+        plt.title("Head Rotation vs. Session Duration by VR Sickness")
         plt.legend(loc='best')
 
     def plot_pause_comparison():
@@ -199,7 +199,7 @@ def plot_comparisons_interactive(df):
         sns.boxplot(data=df_completed, x="Sickness", y="Total Pause Duration (s)", ax=ax3)
         ax3.set_title("Total Pause Duration (s)")
         
-        plt.suptitle("Parametry pauz: zdrowi vs. chorzy")
+        plt.suptitle("Pause Parameters: Healthy vs. Sick")
         plt.tight_layout(rect=[0, 0, 1, 0.95])
         plt.draw()
     
@@ -219,7 +219,7 @@ def plot_comparisons_interactive(df):
         sns.boxplot(data=df_completed, x="Experience", y="Total Pause Duration (s)", ax=ax3)
         ax3.set_title("Total Pause Duration (s)")
         
-        plt.suptitle("Parametry pauz: doświadczony vs. nie doświadczony")
+        plt.suptitle("Pause Parameters: Experienced vs. Inexperienced")
         plt.tight_layout(rect=[0, 0, 1, 0.95])
         plt.draw()
 
@@ -255,7 +255,7 @@ def plot_comparisons_interactive(df):
 
     # Rysujemy pierwszy wykres
     plot_funcs[current_plot[0]]()
-    plt.suptitle("Interaktywna karuzela wykresów (←/→ aby przełączać)")
+    plt.suptitle("Interactive Carousel of Plots (←/→ to navigate)")
     plt.show()
 
 def display_stats(stats_data):
@@ -402,32 +402,32 @@ def plot_combined_interactive(df_samples):
         # Wykres prędkości
         ax1 = plt.subplot(1, 3, 1)
         ax1.plot(data["time_sec"], data["velocity_magnitude"], 'g-', label="Prędkość")
-        ax1.set_title(f"Prędkość - {file}")
-        ax1.set_xlabel("Czas (s)")
-        ax1.set_ylabel("Moduł prędkości")
+        ax1.set_title(f"Velocity - {file}")
+        ax1.set_xlabel("Time (s)")
+        ax1.set_ylabel("Velocity Magnitude")
         ax1.legend()
         
         # Wykres rotacji głowy
         ax2 = plt.subplot(1, 3, 2)
         ax2.plot(data["time_sec"], data["headRotationAngle"], 'b-', label="Głowa")
-        ax2.set_title(f"Rotacja głowy - {file}")
-        ax2.set_xlabel("Czas (s)")
-        ax2.set_ylabel("Kąt (°)")
+        ax2.set_title(f"Head Rotation - {file}")
+        ax2.set_xlabel("Time (s)")
+        ax2.set_ylabel("Angle (°)")
         ax2.legend()
         
         # Wykres rotacji ciała
         ax3 = plt.subplot(1, 3, 3)
         ax3.plot(data["time_sec"], data["bodyRotationAngle"], 'r-', label="Ciało")
-        ax3.set_title(f"Rotacja ciała - {file}")
-        ax3.set_xlabel("Czas (s)")
-        ax3.set_ylabel("Kąt (°)")
+        ax3.set_title(f"Body Rotation - {file}")
+        ax3.set_xlabel("Time (s)")
+        ax3.set_ylabel("Angle (°)")
         ax3.legend()
 
         # Dodaj napis z nazwą folderu w lewym górnym rogu
         plt.text(0.01, 0.98, f"Folder: {folder_name}", 
                  transform=fig.transFigure, fontsize=12, verticalalignment='top', bbox=dict(facecolor='white', alpha=0.8))
         
-        plt.suptitle(f"Plik {idx+1}/{len(files)}: {file} (←/→ aby przewijać)", fontsize=14)
+        plt.suptitle(f"Plik {idx+1}/{len(files)}: {file} (←/→ to navigate)", fontsize=14)
         plt.draw()
     
     def on_key(event):
