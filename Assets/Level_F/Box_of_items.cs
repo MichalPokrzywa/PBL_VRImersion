@@ -12,9 +12,4 @@ public class Box_of_items : MonoBehaviour
             items_in_box++;
         }
     }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

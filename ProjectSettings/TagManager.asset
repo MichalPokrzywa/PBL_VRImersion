@@ -9,6 +9,7 @@ TagManager:
   - Water
   - Shield
   - Plank
+  - Relict
   layers:
   - Default
   - TransparentFX
