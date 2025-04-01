@@ -1,13 +1,8 @@
 using System;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class Axe : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
     public GameObject axe;
     private float rotation=180;
     [SerializeField] float speed;
@@ -16,7 +11,7 @@ public class Axe : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            onDeath.Invoke();
+            SceneManager.LoadScene("Level_F");
         }
     }
     // Update is called once per frame
