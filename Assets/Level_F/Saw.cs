@@ -1,5 +1,6 @@
 using System;
 using Unity.VisualScripting;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 public class Saw : MonoBehaviour
@@ -17,7 +18,7 @@ public class Saw : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            onDeath.Invoke();
+            SceneManager.LoadScene("Level_F");
         }
     }
     // Update is called once per frame
