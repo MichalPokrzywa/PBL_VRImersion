@@ -1,6 +1,6 @@
 using UnityEngine;
 using System;
-
+using UnityEngine.SceneManagement;
 public class WinCondition : MonoBehaviour
 {
     public static Action onFinishRoofTop;
@@ -9,7 +9,7 @@ public class WinCondition : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            onFinishRoofTop.Invoke();
+            SceneManager.LoadScene("Level_F");
         }
     }
 }
