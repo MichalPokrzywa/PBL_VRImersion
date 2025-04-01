@@ -1,6 +1,6 @@
 using System;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 public class out_of_bounds : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -13,11 +13,11 @@ public class out_of_bounds : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            onDeath.Invoke();
+            SceneManager.LoadScene("Level_F");
         }
         if (other.CompareTag("Relict"))
         {
-            other.gameObject.transform.position = new Vector3(530,100,437);
+            SceneManager.LoadScene("Level_F");
         }
     }
     // Update is called once per frame
